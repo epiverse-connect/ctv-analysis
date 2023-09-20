@@ -3,6 +3,7 @@ source("src/gh.R")
 # Note that keyring relies on sodium. A system pre-requisite is libsodium i.e run brew install libsodium.
 library(keyring)
 library(gh)
+library(httr)
 
 # Set the GitHub PAT
 # run key_set("github_pat", "YOUR_PAT_TOKEN")
