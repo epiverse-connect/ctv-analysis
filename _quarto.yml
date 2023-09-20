@@ -1,0 +1,4 @@
+website:
+  navbar:
+    background: primary
+    search: true
