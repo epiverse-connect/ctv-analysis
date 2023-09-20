@@ -24,15 +24,13 @@ gh_split_url <- function(url) {
 #' @param repo The repo to check in
 #' @param owner The owner of the repo
 #' @return TRUE if the file exists, FALSE if it does not
-gh_file_exists <- function(file, repo, owner) {
+gh_file_exists <- function(file, repo) {
   # Create the url
-  url <- paste0("https://api.github.com/repos/", owner, "/", repo, "/contents/", file)
+  url <- paste0("https://api.github.com/repos/", repo, "/contents/", file)
   # Get the contents of the url.
   # If the file throws a 404 error, file exists will be False
   # If the file does not throw a 404 error, file exists will be True
-  file_exists <- !grepl("404", httr::GET(url)$status_code)
-  # Lets display the result to verify the url matches the status OK in a manual review.
-  print(paste0("File: ", file, " exists: ", file_exists))
+  file_exists <- !http_error(httr::GET(url, httr::add_headers(Authorization = paste0("token ", gh::gh_token()))))
   # Return the result
   return(file_exists)
 }
@@ -43,13 +41,13 @@ gh_file_exists <- function(file, repo, owner) {
 #' @param repo The repo to check in
 #' @param owner The owner of the repo
 #' @return A vector of TRUE/FALSE values for each file
-gh_file_list_exists <- function(files, repo, owner) {
+gh_file_list_exists <- function(files, repo) {
   # Create an empty vector to store the results
   results <- vector(mode = "logical", length = length(files))
   # Loop through the files
   for (i in seq_along(files)) {
     # Check if the file exists
-    results[i] <- gh_file_exists(files[i], repo, owner)
+    results[i] <- gh_file_exists(files[i], repo)
   }
 
   # Return the results
