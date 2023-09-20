@@ -1,4 +1,4 @@
-# tests the functions in src/gh.R
+# tests the functions in _scripts/gh.R
 
 # load testthat package
 library(testthat)
