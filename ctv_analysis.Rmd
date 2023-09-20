@@ -1,0 +1,59 @@
+---
+title: "`r params$ctv` Task View analysis"
+author: "Hugo Gruson"
+params:
+  ctv: "Epidemiology"
+---
+
+```{r}
+tf <- tempfile(fileext = ".md")
+download.file(
+  paste0(
+    "https://github.com/cran-task-views/",
+    params$ctv,
+    "/raw/main/",
+    params$ctv,
+    ".md"
+  ),
+  tf
+)
+```
+
+```{r, message = FALSE}
+library(ctv)
+library(pkgsearch)
+library(dplyr)
+library(purrr)
+```
+
+```{r}
+(
+  ctv_pkg_descriptions <- ctv::read.ctv(tf) |> 
+    purrr::pluck("packagelist", "name") |> 
+    pkgsearch::cran_packages()
+)
+```
+
+## Best practices
+
+### From`DESCRIPTION`
+
+- has GitHub URLs
+- uses roxygen
+- uses testing framework
+- no deprecated deps
+- has vignette
+
+
+```{r}
+ctv_pkg_descriptions |> 
+  transmute(
+    has_github_url     = grepl("https://github.com/", URL) | grepl("https://github.com/", BugReports),
+    uses_roxygen       = !is.na(RoxygenNote),
+    has_knitr_vignette = grepl("knitr", VignetteBuilder),
+    uses_testing       = purrr::map_lgl(dependencies, ~ any(.x$package %in% c("testthat", "testit", "unitizer", "RUnit", "tinytest"))),
+    has_no_deprecated  = !purrr::map_lgl(dependencies, ~ any(.x$package %in% c("RUnit", "XML", "RCurl", "plyr", "reshape2")))
+  ) |> 
+  mutate(across(everything(), ~ ifelse(.x, "✅", "❌"))) |> 
+  DT::datatable()
+```
