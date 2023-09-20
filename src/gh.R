@@ -1,5 +1,9 @@
 # This is a collection of scripts that will connect to the github api and check for the existance of a file in a repo.
 
+# We want to import the md5 package to check the "fingerprint" of a file.
+# This is useful for checking if a file is up to date.
+library(digest)
+
 #' Github urls need to be split to user and repo to make the api call work.
 #' @param url The url to split
 #' @return A list containing the user and repo
@@ -30,7 +34,14 @@ gh_file_exists <- function(file, repo, owner) {
   # Get the contents of the url.
   # If the file throws a 404 error, file exists will be False
   # If the file does not throw a 404 error, file exists will be True
-  file_exists <- !grepl("404", httr::GET(url)$status_code)
+  # Add the gh token to the httr request
+
+  # Get the file and pass the Github PAT token
+  file_request <- httr::GET(url, httr::add_headers(Authorization = paste0("token ", gh_token())))
+
+  # if the file exists and returns 200, set file_exists to TRUE, otherwise set it to FALSE
+  file_exists <- file_request$status_code == 200
+
   # Lets display the result to verify the url matches the status OK in a manual review.
   print(paste0("File: ", file, " exists: ", file_exists))
   # Return the result
@@ -49,7 +60,8 @@ gh_file_list_exists <- function(files, repo, owner) {
   # Loop through the files
   for (i in seq_along(files)) {
     # If the file is github workflow, run a different function
-    if (files[i] == ".github/workflows") {
+    if (files[i] == ".github/workflows/") {
+      print("Checking Workflow md5 matches...")
       # Check if the workflow is up to date
       results[i] <- gh_workflow_check(repo, owner)
     }
@@ -78,8 +90,10 @@ gh_workflow_check <- function(repo, owner) {
     # There are two scenarios. The workflows folder exists, which is great!
     # But even better is if it matches the tidyverse fingerprint.
     workflow_up_to_date <- gh_workflow_tidyverse_fingerprint(repo, owner)
+    print(workflow_up_to_date)
     # Return the result
     return(workflow_up_to_date)
+
   } else {
     # Return FALSE if the workflow does not exist
     return(FALSE)
@@ -117,4 +131,23 @@ gh_workflow_tidyverse_fingerprint <- function(repo, owner) {
   workflow_files_names <- workflow_files$name
   # We will check if any contents of the files in the vector matches the tidyverse fingerprint
   # The tidyverse fingerprint is located at https://github.com/tidyverse/tidytemplate/blob/main/.github/workflows/R-CMD-check.yaml
+
+  # Get the md5 fingerprint of the tidyverse workflow
+  tidyverse_workflow <- httr::GET("https://raw.githubusercontent.com/tidyverse/tidytemplate/main/.github/workflows/R-CMD-check.yaml")
+  tidyverse_workflow_md5 <- digest(tidyverse_workflow$content, algo = "md5")
+
+  # loop through the workflow file names
+  for (i in seq_along(workflow_files_names)) {
+    # Get the file
+    file <- httr::GET(workflow_files$download_url[i])
+    # Get the md5 fingerprint of the file
+    file_md5 <- digest(file$content, algo = "md5")
+    # Check if the file matches the tidyverse fingerprint
+    print(paste0("File: ", workflow_files_names[i], " matches tidyverse fingerprint: ", file_md5 == tidyverse_workflow_md5))
+    if (file_md5 == tidyverse_workflow_md5) {
+      # If it does, return TRUE
+      return(TRUE)
+    }
+  }
+
 }
