@@ -11,7 +11,7 @@ github_pat <- key_get("github_pat")
 gh_token(github_pat)
 
 # What is the list of files to check for?
-files <- c("README.md", "pkgdown.yaml", "pkgdown.yml")
+files <- c("README.md", "pkgdown.yaml", "pkgdown.yml", "LICENSE")
 
 # A list of test repos. This list will be generated from a function parameter in the future so as to dynamically generate the list from cran.
 # The list is a list of lists containing i) the repo name and ii) the owner of the repo.
