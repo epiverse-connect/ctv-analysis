@@ -11,7 +11,7 @@ github_pat <- key_get("github_pat")
 gh_token(github_pat)
 
 # What is the list of files to check for?
-files <- c("README.md", "pkgdown.yaml", "pkgdown.yml")
+files <- c("README.md", "pkgdown.yaml", "pkgdown.yml", ".github/workflows/")
 
 # A list of test repos. This list will be generated from a function parameter in the future so as to dynamically generate the list from cran.
 # The list is a list of lists containing i) the repo name and ii) the owner of the repo.
@@ -45,8 +45,8 @@ for (i in seq_along(repos)) {
     # Get the owner
     owner <- repos[[i]]$user
     # Check if the files exist
-    results <- gh_file_list_exists(files, repo, owner)
+    file_results <- gh_file_list_exists(files, repo, owner)
     # Print the results
-    print(results)
+    print(file_results)
 }
 

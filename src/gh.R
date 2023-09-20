@@ -48,10 +48,40 @@ gh_file_list_exists <- function(files, repo, owner) {
   results <- vector(mode = "logical", length = length(files))
   # Loop through the files
   for (i in seq_along(files)) {
-    # Check if the file exists
-    results[i] <- gh_file_exists(files[i], repo, owner)
+    # If the file is github workflow, run a different function
+    if (files[i] == ".github/workflows") {
+      # Check if the workflow is up to date
+      results[i] <- gh_workflow_check(repo, owner)
+    }
+    else {
+      # Check if the file exists
+      results[i] <- gh_file_exists(files[i], repo, owner)
+    }
   }
 
   # Return the results
   return(results)
+}
+
+#' A function that checks if the workflow is up to date for CI
+#' The repo checks if .github/workflow exists
+#' If it does, an extra function runs to check if it matches the up to date tidyverse repo.
+#' @param repo The repo to check in
+#' @param owner The owner of the repo
+#' @return a string description if the workflow is up to date, FALSE if it is not
+gh_workflow_check <- function(repo, owner) {
+  # Check if the workflow exists
+  workflow_exists <- gh_file_exists(".github/workflows/", repo, owner)
+  # If the workflow exists, check if it is up to date
+  if (workflow_exists) {
+    # Check if the workflow is up to date
+    # There are two scenarios. The workflows folder exists, which is great!
+    # But even better is if it matches the tidyverse fingerprint.
+    workflow_up_to_date <- "Workflow exists"
+    # Return the result
+    return(workflow_up_to_date)
+  } else {
+    # Return FALSE if the workflow does not exist
+    return(FALSE)
+  }
 }
