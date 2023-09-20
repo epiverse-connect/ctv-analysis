@@ -77,11 +77,44 @@ gh_workflow_check <- function(repo, owner) {
     # Check if the workflow is up to date
     # There are two scenarios. The workflows folder exists, which is great!
     # But even better is if it matches the tidyverse fingerprint.
-    workflow_up_to_date <- "Workflow exists"
+    workflow_up_to_date <- gh_workflow_tidyverse_fingerprint(repo, owner)
     # Return the result
     return(workflow_up_to_date)
   } else {
     # Return FALSE if the workflow does not exist
     return(FALSE)
   }
+}
+
+#' A function that lists the files in a github folder
+#' @param repo The repo to check in
+#' @param owner The owner of the repo
+#' @param location The location of the folder to check
+#' @return A list of files in the folder
+gh_list_files <- function(repo, owner, location) {
+    # Create the url
+    url <- paste0("https://api.github.com/repos/", owner, "/", repo, "/contents/", location)
+    # Get the contents of the url.
+    # If the file throws a 404 error, file exists will be False
+    # If the file does not throw a 404 error, file exists will be True
+    files <- httr::GET(url)
+    #print the result
+    print(files)
+    # Return the result
+    return(files)
+    }
+
+#' A function that checks if the workflow is up to date for CI
+#' Checks if the fingerprint of the file matches the most up to date tidyverse fingerprint
+#' The reference file is located at https://github.com/tidyverse/tidytemplate/blob/main/.github/workflows/R-CMD-check.yaml
+#' @param repo The repo to check in
+#' @param owner The owner of the repo
+#' @return TRUE if the workflow is up to date, FALSE if it is not
+gh_workflow_tidyverse_fingerprint <- function(repo, owner) {
+  # Fetch a list of all files in the workflows folder
+  workflow_files <- gh_list_files(repo, owner, ".github/workflows/")
+  # Create a vector of the file names
+  workflow_files_names <- workflow_files$name
+  # We will check if any contents of the files in the vector matches the tidyverse fingerprint
+  # The tidyverse fingerprint is located at https://github.com/tidyverse/tidytemplate/blob/main/.github/workflows/R-CMD-check.yaml
 }
