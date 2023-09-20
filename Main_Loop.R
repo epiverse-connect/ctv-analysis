@@ -16,10 +16,16 @@ files <- c("README.md", "pkgdown.yaml", "pkgdown.yml", "LICENSE", ".github/workf
 # A list of test repos. This list will be generated from a function parameter in the future so as to dynamically generate the list from cran.
 # The list is a list of lists containing i) the repo name and ii) the owner of the repo.
 
-repos <- list(
-  gh_split_url("https://github.com/tobadia/R0"),
-  gh_split_url("https://github.com/reconhub/epicontacts")
-)
+url_list <- c("https://github.com/tobadia/R0", "https://github.com/reconhub/epicontacts")
+
+# For each repo in the list, split the url and add it to repos.
+repos <- list()
+for (i in seq_along(url_list)) {
+    # Split the url
+    url_info <- gh_split_url(url_list[i])
+    # Add the repo to the list
+    repos[[i]] <- url_info
+}
 
 print(repos)
 # Repos should look like a list of lists
@@ -49,4 +55,3 @@ for (i in seq_along(repos)) {
     # Print the results
     print(file_results)
 }
-
