@@ -28,8 +28,8 @@ library(purrr)
 
 ```{r}
 (
-  ctv_pkg_descriptions <- ctv::read.ctv(tf) |> 
-    purrr::pluck("packagelist", "name") |> 
+  ctv_pkg_descriptions <- ctv::read.ctv(tf) %>%
+    purrr::pluck("packagelist", "name") %>%
     pkgsearch::cran_packages()
 )
 ```
@@ -45,14 +45,46 @@ library(purrr)
 - has vignette
 
 
+:::{.column-screen-inset}
 ```{r}
-ctv_pkg_descriptions |> 
+ctv_pkg_descriptions %>%
   transmute(
     has_github_url     = grepl("https://github.com/", URL) | grepl("https://github.com/", BugReports),
     uses_roxygen       = !is.na(RoxygenNote),
     has_knitr_vignette = grepl("knitr", VignetteBuilder),
     uses_testing       = purrr::map_lgl(dependencies, ~ any(.x$package %in% c("testthat", "testit", "unitizer", "RUnit", "tinytest"))),
     has_no_deprecated  = !purrr::map_lgl(dependencies, ~ any(.x$package %in% c("RUnit", "XML", "RCurl", "plyr", "reshape2")))
+  ) %>%
+  mutate(
+    n_valid_checks = rowSums(.)
+  ) %>%
+  arrange(desc(n_valid_checks)) %>%
+  mutate(across(-n_valid_checks, ~ ifelse(.x, "✅", "❌"))) %>% 
+  DT::datatable()
+```
+:::
+
+### From GitHub
+
+```{r load-gh-helpers}
+library(httr)
+source("_scripts/gh.R")
+```
+
+```{r}
+ctv_pkg_descriptions |> 
+  transmute(
+    github_repo = dplyr::coalesce(
+      stringr::str_match(URL, "https://github.com/(\\w+/\\w+)")[, 2],
+      stringr::str_match(BugReports, "https://github.com/(\\w+/\\w+)/issues")[, 2]
+    )
+  ) |> 
+  na.omit() |> 
+  rowwise() |> 
+  transmute(
+    has_rmd_readme = gh_file_exists("README.Rmd", github_repo),
+    has_md_license = gh_file_exists("LICENSE.md", github_repo),
+    has_pkgdown    = any(gh_file_list_exists(c("_pkgdown.yml", "_pkgdown.yaml", "pkgdown/pkgdown.yml"), github_repo))
   ) |> 
   mutate(across(everything(), ~ ifelse(.x, "✅", "❌"))) |> 
   DT::datatable()
