@@ -78,12 +78,13 @@ gh_workflow_check <- function(repo, owner) {
   workflow_exists <- gh_file_exists(".github/workflows/", repo, owner)
   # If the workflow exists, check if it is up to date
   if (workflow_exists) {
+    print("Workflow exists")
     # Check if the workflow is up to date
     # There are two scenarios. The workflows folder exists, which is great!
     # But even better is if it matches the tidyverse fingerprint.
     workflow_up_to_date <- gh_workflow_tidyverse_fingerprint(repo, owner)
     print(workflow_up_to_date)
-    # Return the result
+    # Return the result 
     return(workflow_up_to_date)
 
   } else {
@@ -97,16 +98,23 @@ gh_workflow_check <- function(repo, owner) {
 #' @param repo The repo to check in
 #' @param owner The owner of the repo
 #' @param location The location of the folder to check
-#' @return A list of files in the folder
+#' @return A list of download files in the folder
 gh_list_files <- function(repo, owner, location) {
     # Create the url
     url <- paste0("https://api.github.com/repos/", owner, "/", repo, "/contents/", location)
     # Get the contents of the url.
     # If the file throws a 404 error, file exists will be False
     # If the file does not throw a 404 error, file exists will be True
-    files <- httr::GET(url)
-    #print the result
-    print(files)
+    # Use the httr package to get the url with the GitHub authentication token
+    files <- httr::GET(url, httr::add_headers(Authorization = paste0("token ", gh::gh_token())))
+    # Within files is a download url. We want to extract that and return it. download_url.
+
+    # Convert the files to a list because reading the httr return is a pain
+    files <- httr::content(files)
+    # Convert the list to a dataframe. Thi might allow us to handle multiple returns more easily in the future.
+    files <- as.data.frame(files)
+    # Get the download url from the dataframe and return it.
+    files <- files$download_url
     # Return the result
     return(files)
     }
@@ -116,33 +124,36 @@ gh_list_files <- function(repo, owner, location) {
 #' A function that checks if the workflow is up to date for CI
 #' Checks if the fingerprint of the file matches the most up to date tidyverse fingerprint
 #' The reference file is located at https://github.com/tidyverse/tidytemplate/blob/main/.github/workflows/R-CMD-check.yaml
+#' Ideally, this would also allow for a user to specify a different fingerprint to check against to see if older versions or standards are met.
 #' @param repo The repo to check in
 #' @param owner The owner of the repo
 #' @return TRUE if the workflow is up to date, FALSE if it is not
 gh_workflow_tidyverse_fingerprint <- function(repo, owner) {
   # Fetch a list of all files in the workflows folder
   workflow_files <- gh_list_files(repo, owner, ".github/workflows/")
-  # Create a vector of the file names
-  workflow_files_names <- workflow_files$name
   # We will check if any contents of the files in the vector matches the tidyverse fingerprint
   # The tidyverse fingerprint is located at https://github.com/tidyverse/tidytemplate/blob/main/.github/workflows/R-CMD-check.yaml
 
   # Get the md5 fingerprint of the tidyverse workflow
   tidyverse_workflow <- httr::GET("https://raw.githubusercontent.com/tidyverse/tidytemplate/main/.github/workflows/R-CMD-check.yaml")
   tidyverse_workflow_md5 <- digest(tidyverse_workflow$content, algo = "md5")
-
+  
+  # We will make an empty list of hashes and populate it with the workflow file fingerprints.
+  hashes <- vector(mode = "character", length = length(workflow_files))
   # loop through the workflow file names
-  for (i in seq_along(workflow_files_names)) {
-    # Get the file
-    file <- httr::GET(workflow_files$download_url[i])
+  for (i in seq_along(workflow_files)) {
+    # Get the file 
+    file <- httr::GET(workflow_files)
     # Get the md5 fingerprint of the file
     file_md5 <- digest(file$content, algo = "md5")
-    # Check if the file matches the tidyverse fingerprint
-    print(paste0("File: ", workflow_files_names[i], " matches tidyverse fingerprint: ", file_md5 == tidyverse_workflow_md5))
-    if (file_md5 == tidyverse_workflow_md5) {
-      # If it does, return TRUE
-      return(TRUE)
-    }
+    # Add the fingerprint to the list
+    hashes[i] <- file_md5
   }
-
+  
+  # Check if the tidyverse_workflow_md5 appears in the hashes.
+  # If it does, return TRUE
+  if (tidyverse_workflow_md5 %in% hashes) {
+    return(TRUE)
+  } else {return(FALSE)}
+  
 }
