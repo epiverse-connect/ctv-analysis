@@ -70,6 +70,13 @@ ctv_pkg_descriptions %>%
 
 ### From GitHub
 
+For package that specify the URL to their GitHub repository either in the `URL` or the `BugReports` `DESCRIPTION` field, we can pull additional information and perform further checks:
+
+- has Rmd README: all projects should include a README to briefly introduce visitors to the project scope and goals. Here, we go one step further by checking if the packages include a README in Rmarkdown format. This is the current best practice in R package development because it allows package authors to include code examples with their output. We check here for the existence of this `README.Rmd` file at the root of the GitHub repository.
+- has md license: while it is not strictly necessary for R packages to include a separate license file (it is technically sufficient to only mention the license in the `DESCRIPTION`), it is considered best practice. We check here for the presence of a `LICENSE.md` file at the root of the GitHub repository. The markdown syntax makes it more user-friendly and corresponds to the version automatically created by common R developer tools. 
+- uses pkgdown: the pkgdown R package is a documentation framework for R packages (alternatives in other languages include readthedocs, or mkdocs). This creates a website to host the documentation in a visually pleasing and accessible way. We check compliance by testing for the presence of a mandatory pkgdown configuration file in the repository.
+- uses GitHub Actions: on top of tests mentioned earlier, it is good practice to set up an automated system to run these checks on each code change. A popular framework to do so are GitHub Actions, defined in the `.github/workflows/` folder. We check for the use of GitHub Actions in packages via the presence of this folder.
+
 ```{r load-gh-helpers}
 library(httr)
 source("_scripts/gh.R")
