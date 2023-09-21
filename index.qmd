@@ -38,6 +38,10 @@ library(purrr)
 
 This list of automated checks for modern best practices in R package development is inspired by standards defined by various R communities such as [rOpenSci](https://ropensci.org) and [Epiverse-TRACE](https://epiverse-trace.github.io/).
 
+The checks performed here should not be taken as a direct measure of code quality, but they reflect adherence to community established best standards. These standards are usually the fruit of extensive experience from these communities and generally help to produce higher-quality, more usable and maintainable code.
+
+It is important to note that statistical or mathematical correctness is not assessed in any way here. This project focuses exclusively on packaging and software development best practices.
+
 ### From `DESCRIPTION`
 
 We can already pull some useful information for the `DESCRIPTION` file, which is the foundation of any R package. We perform the following checks:
