@@ -1,6 +1,10 @@
 ---
 title: "`r params$ctv` Task View analysis"
-author: "Hugo Gruson"
+author: 
+  - "James Baker"
+  - "Chathura Edirisuriya"
+  - "Hugo Gruson"
+date: last-modified
 params:
   ctv: "Epidemiology"
 ---
