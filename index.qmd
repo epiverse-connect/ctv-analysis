@@ -49,7 +49,7 @@ library(purrr)
 ```{r}
 ctv_pkg_descriptions %>%
   transmute(
-    has_github_url     = grepl("https://github.com/", URL) | grepl("https://github.com/", BugReports),
+    has_github_url     = startsWith(URL, "https://github.com/") | startsWith(BugReports, "https://github.com/"),
     uses_roxygen       = !is.na(RoxygenNote),
     has_knitr_vignette = grepl("knitr", VignetteBuilder),
     uses_testing       = purrr::map_lgl(dependencies, ~ any(.x$package %in% c("testthat", "testit", "unitizer", "RUnit", "tinytest"))),
