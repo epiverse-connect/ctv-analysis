@@ -43,7 +43,6 @@ gh_file_exists <- function(file, repo) {
 #' A function that loops through the files to check in a repo
 #' @param files A vector of files to check for in the repo
 #' @param repo The repo to check in
-#' @param owner The owner of the repo
 #' @return A vector of TRUE/FALSE values for each file
 gh_file_list_exists <- function(files, repo) {
   # Create an empty vector to store the results

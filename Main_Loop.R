@@ -1,5 +1,5 @@
 # import src functions
-source("src/gh.R")
+source("_scripts/gh.R")
 # Note that keyring relies on sodium. A system pre-requisite is libsodium i.e run brew install libsodium.
 library(keyring)
 library(gh)
