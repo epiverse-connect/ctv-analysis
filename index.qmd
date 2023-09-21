@@ -71,6 +71,7 @@ library(httr)
 source("_scripts/gh.R")
 ```
 
+:::{.column-screen-inset}
 ```{r}
 ctv_pkg_descriptions %>%
   transmute(
@@ -93,3 +94,4 @@ ctv_pkg_descriptions %>%
   mutate(across(-n_valid_checks, ~ ifelse(.x, "✅", "❌"))) %>% 
   DT::datatable()
 ```
+:::
