@@ -9,10 +9,12 @@ list.files("_packages", full.names = TRUE) |>
     )
   })
 
+safe_lint <- purrr::safely(lintr::lint_package)
 # Loop to lint all extracted packages in tf
 res <- list.files(tf, full.names = TRUE) |>
+  purrr::set_names(basename) |>
   purrr::map(function(package) {
-    lintr::lint_package(
+    safe_lint(
       package
     )
   })
