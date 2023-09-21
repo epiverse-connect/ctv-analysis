@@ -28,9 +28,9 @@ gh_split_url <- function(url) {
 #' @param repo The repo to check in
 #' @param owner The owner of the repo
 #' @return TRUE if the file exists, FALSE if it does not
-gh_file_exists <- function(file, repo) {
+gh_file_exists <- function(file, repo, owner) {
   # Create the url
-  url <- paste0("https://api.github.com/repos/", repo, "/contents/", file)
+  url <- paste0("https://api.github.com/repos/", owner, "/", repo, "/contents/", file)
   # Get the contents of the url.
   # If the file throws a 404 error, file exists will be False
   # If the file does not throw a 404 error, file exists will be True
@@ -38,25 +38,6 @@ gh_file_exists <- function(file, repo) {
   # Return the result
   return(file_exists)
 }
-
-#' We want to shove a vector to the gh_file_exists function
-#' A function that loops through the files to check in a repo
-#' @param files A vector of files to check for in the repo
-#' @param repo The repo to check in
-#' @return A vector of TRUE/FALSE values for each file
-gh_file_list_exists <- function(files, repo) {
-  # Create an empty vector to store the results
-  results <- vector(mode = "logical", length = length(files))
-  # Loop through the files
-  for (i in seq_along(files)) {
-    # Check if the file exists
-    results[i] <- gh_file_exists(files[i], repo)
-  }
-
-  # Return the results
-  return(results)
-}
-
 
 #' A function that lists the files in a github folder
 #' @param repo The repo to check in
@@ -75,6 +56,34 @@ gh_list_files <- function(repo, owner, location) {
     # Return the result
     return(files)
     }
+
+#' We want to shove a vector to the gh_file_exists function
+#' A function that loops through the files to check in a repo
+#' @param files A vector of files to check for in the repo
+#' @param repo The repo to check in
+#' @param owner The owner of the repo
+#' @return A vector of TRUE/FALSE values for each file
+gh_file_list_exists <- function(files, repo, owner) {
+  # Create an empty vector to store the results
+  results <- vector(mode = "logical", length = length(files))
+  # Loop through the files
+  for (i in seq_along(files)) {
+    # If the file is github workflow, run a different function
+    if (files[i] == ".github/workflows/") {
+      print("Checking Workflow md5 matches...")
+      # Check if the workflow is up to date
+      results[i] <- gh_workflow_check(repo, owner)
+    }
+    else {
+      # Check if the file exists
+      results[i] <- gh_file_exists(files[i], repo, owner)
+    }
+  }
+
+  # Return the results
+  return(results)
+}
+
 
 #' A function that checks if the workflow is up to date for CI
 #' Checks if the fingerprint of the file matches the most up to date tidyverse fingerprint
