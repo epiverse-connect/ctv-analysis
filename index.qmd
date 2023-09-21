@@ -36,13 +36,17 @@ library(purrr)
 
 ## Best practices
 
-### From`DESCRIPTION`
+This list of automated checks for modern best practices in R package development is inspired by standards defined by various R communities such as [rOpenSci](https://ropensci.org) and [Epiverse-TRACE](https://epiverse-trace.github.io/).
 
-- has GitHub URLs
-- uses roxygen
-- uses testing framework
-- no deprecated deps
-- has vignette
+### From `DESCRIPTION`
+
+We can already pull some useful information for the `DESCRIPTION` file, which is the foundation of any R package. We perform the following checks:
+
+- has GitHub URLs: does the package include a link to the source code on GitHub? Even though all CRAN packages are open-source, this demonstrates a commitment to facilitate bug report and community involvement in the project. This is tested by checking for a string starting with "https://github.com/" in the `URL` or `BugReports` fields.
+- uses roxygen: [roxygen2](https://roxygen2.r-lib.org/) is an R package for documentation. It allows package developers to write their documentation next to the function definition (similar to [python's docstrings](https://en.wikipedia.org/wiki/Docstring)). It is considered best practice because it reduces the risk of the documentation going stale and its markdown syntax makes it simpler to produce high-quality documentation. This is checked by the presence of the custom `RoxygenNote` field in the `DESCRIPTION` file.
+- uses testing framework: modern standards in software development recommend the use of regression and unit tests; these are tests that will ensure that your package remains fully functioning after any change to the code. This is tested by checking for the presence of one testing framework (testthat, testit, unitizer, RUnit or tinytest) in the package dependencies.
+- no deprecated dependencies: some R packages (RUnit, XML, RCurl, plyr, reshape2) are known to have been superseded or abandoned by the maintainers. They will not include any new features and will at best receive punctual bug fixes. To limit technical debt, it is recommended to depend on more modern and actively developed alternatives.
+- has vignette: vignettes are a long form of documentation for R packages. They often include more detailed examples or walkthroughs. To improve usability of the package, at least one vignette should be included. The recommended engine to build vignettes is the knitr R package. Compliance with this check is assessed by the presence of the knitr package in the `VignetteBuilder` field. 
 
 
 :::{.column-screen-inset}
