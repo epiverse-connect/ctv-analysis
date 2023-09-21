@@ -1,5 +1,9 @@
 # This is a collection of scripts that will connect to the github api and check for the existance of a file in a repo.
 
+# We want to import the md5 package to check the "fingerprint" of a file.
+# This is useful for checking if a file is up to date.
+library(digest)
+
 #' Github urls need to be split to user and repo to make the api call work.
 #' @param url The url to split
 #' @return A list containing the user and repo
@@ -52,4 +56,57 @@ gh_file_list_exists <- function(files, repo) {
 
   # Return the results
   return(results)
+}
+
+
+#' A function that lists the files in a github folder
+#' @param repo The repo to check in
+#' @param owner The owner of the repo
+#' @param location The location of the folder to check
+#' @return A list of files in the folder
+gh_list_files <- function(repo, owner, location) {
+    # Create the url
+    url <- paste0("https://api.github.com/repos/", owner, "/", repo, "/contents/", location)
+    # Get the contents of the url.
+    # If the file throws a 404 error, file exists will be False
+    # If the file does not throw a 404 error, file exists will be True
+    files <- httr::GET(url)
+    #print the result
+    print(files)
+    # Return the result
+    return(files)
+    }
+
+#' A function that checks if the workflow is up to date for CI
+#' Checks if the fingerprint of the file matches the most up to date tidyverse fingerprint
+#' The reference file is located at https://github.com/tidyverse/tidytemplate/blob/main/.github/workflows/R-CMD-check.yaml
+#' @param repo The repo to check in
+#' @param owner The owner of the repo
+#' @return TRUE if the workflow is up to date, FALSE if it is not
+gh_workflow_tidyverse_fingerprint <- function(repo, owner) {
+  # Fetch a list of all files in the workflows folder
+  workflow_files <- gh_list_files(repo, owner, ".github/workflows/")
+  # Create a vector of the file names
+  workflow_files_names <- workflow_files$name
+  # We will check if any contents of the files in the vector matches the tidyverse fingerprint
+  # The tidyverse fingerprint is located at https://github.com/tidyverse/tidytemplate/blob/main/.github/workflows/R-CMD-check.yaml
+
+  # Get the md5 fingerprint of the tidyverse workflow
+  tidyverse_workflow <- httr::GET("https://raw.githubusercontent.com/tidyverse/tidytemplate/main/.github/workflows/R-CMD-check.yaml")
+  tidyverse_workflow_md5 <- digest(tidyverse_workflow$content, algo = "md5")
+
+  # loop through the workflow file names
+  for (i in seq_along(workflow_files_names)) {
+    # Get the file
+    file <- httr::GET(workflow_files$download_url[i])
+    # Get the md5 fingerprint of the file
+    file_md5 <- digest(file$content, algo = "md5")
+    # Check if the file matches the tidyverse fingerprint
+    print(paste0("File: ", workflow_files_names[i], " matches tidyverse fingerprint: ", file_md5 == tidyverse_workflow_md5))
+    if (file_md5 == tidyverse_workflow_md5) {
+      # If it does, return TRUE
+      return(TRUE)
+    }
+  }
+
 }

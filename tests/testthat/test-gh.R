@@ -1,8 +1,5 @@
-<<<<<<< HEAD
-# tests the functions in src/gh.R
-=======
 # tests the functions in _scripts/gh.R
->>>>>>> main
+
 
 # load testthat package
 library(testthat)
