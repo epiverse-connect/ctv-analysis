@@ -83,7 +83,8 @@ ctv_pkg_descriptions %>%
   transmute(
     has_rmd_readme = purrr::map_lgl(github_repo, ~ gh_file_exists("README.Rmd", .x)),
     has_md_license = purrr::map_lgl(github_repo, ~ gh_file_exists("LICENSE.md", .x)),
-    has_pkgdown    = purrr::map_lgl(github_repo, ~ any(gh_file_list_exists(c("_pkgdown.yml", "_pkgdown.yaml", "pkgdown/pkgdown.yml"), .x)))
+    has_pkgdown    = purrr::map_lgl(github_repo, ~ any(gh_file_list_exists(c("_pkgdown.yml", "_pkgdown.yaml", "pkgdown/pkgdown.yml"), .x))),
+    has_gha        = purrr::map_lgl(github_repo, ~ gh_file_exists(".github/workflows", .x))
   ) %>%
   mutate(
     n_valid_checks = rowSums(.)
