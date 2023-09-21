@@ -3,4 +3,6 @@
 .RData
 .Ruserdata
 
+renv.lock
+
 /.quarto/
