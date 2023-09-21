@@ -84,6 +84,8 @@ ctv_pkg_descriptions |>
   transmute(
     has_rmd_readme = gh_file_exists("README.Rmd", github_repo),
     has_md_license = gh_file_exists("LICENSE.md", github_repo),
-  )
-files <- c("README.Rmd", "_pkgdown.yaml", "_pkgdown.yml", "LICENSE.md")
+    has_pkgdown    = any(gh_file_list_exists(c("_pkgdown.yml", "_pkgdown.yaml", "pkgdown/pkgdown.yml"), github_repo))
+  ) |> 
+  mutate(across(everything(), ~ ifelse(.x, "✅", "❌"))) |> 
+  DT::datatable()
 ```
