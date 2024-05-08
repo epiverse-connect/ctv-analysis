@@ -25,4 +25,4 @@ res <- ctv_pkgs |>
   dplyr::bind_rows() |>
   cbind(package = ctv_pkgs)
 
-write.csv(res, glue::glue("data/cchecks_{Sys.Date()}.csv"), row.names = FALSE)
+write.csv(res, glue::glue("_data/cchecks_{Sys.Date()}.csv"), row.names = FALSE)
