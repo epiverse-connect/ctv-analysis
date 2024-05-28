@@ -50,8 +50,6 @@ The checks performed here should not be taken as a direct measure of code qualit
 
 It is important to note that statistical or mathematical correctness is not assessed in any way here. This project focuses exclusively on packaging and software development best practices.
 
-### From `DESCRIPTION`
-
 We can already pull some useful information for the `DESCRIPTION` file, which is the foundation of any R package. We perform the following checks:
 
 - has GitHub URLs: does the package include a link to the source code on GitHub? Even though all CRAN packages are open-source, this demonstrates a commitment to facilitate bug report and community involvement in the project. This is tested by checking for a string starting with "https://github.com/" in the `URL` or `BugReports` fields.
@@ -71,8 +69,6 @@ desc_checks <- ctv_pkg_descriptions %>%
     has_no_deprecated  = !purrr::map_lgl(dependencies, ~ any(.x$package %in% c("RUnit", "XML", "RCurl", "plyr", "reshape2")))
   )
 ```
-
-### From GitHub
 
 For package that specify the URL to their GitHub repository either in the `URL` or the `BugReports` `DESCRIPTION` field, we can pull additional information and perform further checks:
 
@@ -102,8 +98,6 @@ gh_checks <- ctv_pkg_descriptions %>%
     has_gha        = purrr::map_lgl(github_repo, ~ gh_file_exists(".github/workflows", .x))
   )
 ```
-
-### Overall
 
 ```{r}
 all_checks <- merge(
