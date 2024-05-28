@@ -1,24 +1,3 @@
-# This is a collection of scripts that will connect to the github api and check
-# for the existence of a file in a repo.
-
-#' Github urls need to be split to user and repo to make the api call work.
-#' @param url The url to split
-#' @return A list containing the user and repo
-gh_split_url <- function(url) {
-  # Split the url
-  split_url <- strsplit(url, "/")[[1]]
-
-  # print the split url to verify it is correct
-  print(split_url)
-  # Get the user
-  user <- split_url[4]
-  # Get the repo
-  repo <- split_url[5]
-
-  # Return the result
-  return(list(user = user, repo = repo))
-}
-
 #' Check if a file exists in a repo
 #' The file is handed to the function as a string
 #' @param file The file to check for
