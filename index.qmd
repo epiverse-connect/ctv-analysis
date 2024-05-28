@@ -112,18 +112,6 @@ n_pkgs <- nrow(all_checks)
 
 ```{r}
 library(ggplot2)
-scores <- all_checks |>
-  mutate(
-    score = rowSums(pick(-package)),
-    .keep = "unused"
-  )
-scores |>
-  ggplot(aes(x = score)) +
-  geom_histogram(binwidth = 0.5) +
-  labs(
-    title = paste("Score distribution in the", params$ctv, "CRAN Task View")
-  )
-
 all_checks |>
   tibble::column_to_rownames("package") |>
   t() |>
