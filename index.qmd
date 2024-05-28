@@ -72,18 +72,6 @@ desc_checks <- ctv_pkg_descriptions %>%
   )
 ```
 
-:::{.column-screen-inset}
-```{r}
-desc_checks %>%
-  mutate(
-    n_valid_checks = rowSums(.)
-  ) %>%
-  arrange(desc(n_valid_checks)) %>%
-  mutate(across(-n_valid_checks, ~ ifelse(.x, "✅", "❌"))) %>%
-  DT::datatable()
-```
-:::
-
 ### From GitHub
 
 For package that specify the URL to their GitHub repository either in the `URL` or the `BugReports` `DESCRIPTION` field, we can pull additional information and perform further checks:
@@ -115,18 +103,6 @@ gh_checks <- ctv_pkg_descriptions %>%
   )
 ```
 
-:::{.column-screen-inset}
-```{r}
-gh_checks %>%
-  mutate(
-    n_valid_checks = rowSums(.)
-  ) %>%
-  arrange(desc(n_valid_checks)) %>%
-  mutate(across(-n_valid_checks, ~ ifelse(.x, "✅", "❌"))) %>%
-  DT::datatable()
-```
-:::
-
 ### Overall
 
 ```{r}
@@ -144,14 +120,6 @@ scores <- all_checks |>
   mutate(
     score = rowSums(pick(-package)),
     .keep = "unused"
-  )
-scores |>
-  ggplot(aes(x = score, y = forcats::fct_reorder(package, score))) +
-  geom_histogram(stat = "identity") +
-  labs(
-    x = "Score",
-    y = "Package",
-    title = paste("Individual scores in the", params$ctv, "CRAN Task View")
   )
 scores |>
   ggplot(aes(x = score)) +
