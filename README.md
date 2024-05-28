@@ -10,18 +10,4 @@ This repository aims at providing a reproducible Rmarkdown report to analyze the
 
 ## For contributing
 
-### Pre-commit
-
-This project uses pre-commit to automatically screen incoming code for a minumum standard.
-
-To comply:
-- Install pre-commit on your machine
-    - `brew install pre-commit`
-- Navigate to this repo
-    - `cd cran-task-view-analysis`
-- Set up pre-commit
-    - `pre-commit install`
-- Make changes to the code
-- Commit your changes
-    - `git commit -m "your message"`
-- Review the pre-commit output
+This project is open to contributions. Please refer to the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information.
