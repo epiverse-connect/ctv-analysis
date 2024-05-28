@@ -2,14 +2,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.376">
+<meta name="generator" content="quarto-1.5.39">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="James Baker">
 <meta name="author" content="Chathura Edirisuriya">
 <meta name="author" content="Hugo Gruson">
-<meta name="dcterms.date" content="2023-09-21">
+<meta name="dcterms.date" content="2024-05-28">
 
 <title>Epidemiology Task View analysis</title>
 <style>
@@ -37,7 +37,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -71,15 +71,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="index_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="index_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="index_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
-<script src="index_files/libs/htmlwidgets-1.6.2/htmlwidgets.js"></script>
+<link href="index_files/libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
+<script src="index_files/libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
 <link href="index_files/libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet">
-<script src="index_files/libs/datatables-binding-0.27/datatables.js"></script>
+<script src="index_files/libs/datatables-binding-0.33/datatables.js"></script>
 <script src="index_files/libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
-<link href="index_files/libs/dt-core-1.12.1/css/jquery.dataTables.min.css" rel="stylesheet">
-<link href="index_files/libs/dt-core-1.12.1/css/jquery.dataTables.extra.css" rel="stylesheet">
-<script src="index_files/libs/dt-core-1.12.1/js/jquery.dataTables.min.js"></script>
-<link href="index_files/libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet">
-<script src="index_files/libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
+<link href="index_files/libs/dt-core-1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
+<link href="index_files/libs/dt-core-1.13.6/css/jquery.dataTables.extra.css" rel="stylesheet">
+<script src="index_files/libs/dt-core-1.13.6/js/jquery.dataTables.min.js"></script>
+<link href="index_files/libs/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet">
+<script src="index_files/libs/crosstalk-1.2.1/js/crosstalk.min.js"></script>
 
 
 </head>
@@ -111,7 +112,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">September 21, 2023</p>
+      <p class="date">May 28, 2024</p>
     </div>
   </div>
   
@@ -121,6 +122,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 </header>
+
 
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>tf <span class="ot">&lt;-</span> <span class="fu">tempfile</span>(<span class="at">fileext =</span> <span class="st">".md"</span>)</span>
@@ -148,21 +150,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    pkgsearch<span class="sc">::</span><span class="fu">cran_packages</span>()</span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A data frame: 83 × 37
+<pre><code># A data frame: 88 × 39
    Package Title Version `Authors@R` Description License URL   Encoding LazyLoad
  * &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;       &lt;chr&gt;       &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;   
  1 adegen… "Exp… 2.1.10  "\nc(perso… "Toolset f… GPL (&gt;… "htt… UTF-8    yes     
- 2 AMR     "Ant… 2.1.0   "c(\nperso… "Functions… GPL-2 … "htt… UTF-8    &lt;NA&gt;    
- 3 argo    "Acc… 3.0.2    &lt;NA&gt;       "Augmented… GPL-2    &lt;NA&gt; UTF-8    &lt;NA&gt;    
- 4 Bernad… "Bay… 1.1.4   "\nc(perso… "Bayesian … GPL (&gt;… "htt… UTF-8    &lt;NA&gt;    
- 5 bets.c… "The… 1.0.0   "c(person(… "Implement… CC BY … "htt… UTF-8    &lt;NA&gt;    
- 6 bkmr    "Bay… 0.2.2   "person(\"… "Implement… GPL-2   "htt… &lt;NA&gt;     &lt;NA&gt;    
- 7 cholera "Ame… 0.8.0   "person(\"… "Amends er… GPL (&gt;… "htt… UTF-8    &lt;NA&gt;    
- 8 cmprsk  "Sub… 2.2-11   &lt;NA&gt;       "Estimatio… GPL (&gt;… "htt… &lt;NA&gt;     &lt;NA&gt;    
- 9 coarse… "Ana… 0.6-6   "c(person(… "Functions… GPL (&gt;… "htt… UTF-8    &lt;NA&gt;    
-10 contac… "Soc… 1.0.0   "\nc(perso… "Data pack… MIT + … "htt… UTF-8    &lt;NA&gt;    
-# ℹ 73 more rows
-# ℹ 28 more variables: RoxygenNote &lt;chr&gt;, Collate &lt;chr&gt;,
+ 2 AMR     "Ant… 2.1.1   "c(\nperso… "Functions… GPL-2 … "htt… UTF-8    &lt;NA&gt;    
+ 3 apisen… "Int… 1.0.0   "\nperson(… "API for u… GPL-2   "htt… UTF-8    &lt;NA&gt;    
+ 4 argo    "Acc… 3.0.2    &lt;NA&gt;       "Augmented… GPL-2    &lt;NA&gt; UTF-8    &lt;NA&gt;    
+ 5 Bernad… "Bay… 1.1.5   "\nc(perso… "Bayesian … GPL (&gt;… "htt… UTF-8    &lt;NA&gt;    
+ 6 bets.c… "The… 1.0.0   "c(person(… "Implement… CC BY … "htt… UTF-8    &lt;NA&gt;    
+ 7 bkmr    "Bay… 0.2.2   "person(\"… "Implement… GPL-2   "htt… &lt;NA&gt;     &lt;NA&gt;    
+ 8 cfr     "Est… 0.1.0   "c(\nperso… "Estimate … MIT + … "htt… UTF-8    &lt;NA&gt;    
+ 9 cholera "Ame… 0.8.0   "person(\"… "Amends er… GPL (&gt;… "htt… UTF-8    &lt;NA&gt;    
+10 cmprsk  "Sub… 2.2-12   &lt;NA&gt;       "Estimatio… GPL (&gt;… "htt… &lt;NA&gt;     &lt;NA&gt;    
+# ℹ 78 more rows
+# ℹ 30 more variables: RoxygenNote &lt;chr&gt;, Collate &lt;chr&gt;,
 #   NeedsCompilation &lt;chr&gt;, Packaged &lt;chr&gt;, Author &lt;chr&gt;, Maintainer &lt;chr&gt;,
 #   Repository &lt;chr&gt;, `Date/Publication` &lt;chr&gt;, crandb_file_date &lt;chr&gt;,
 #   MD5sum &lt;chr&gt;, date &lt;chr&gt;, dependencies &lt;list&gt;, Date &lt;chr&gt;,
@@ -205,8 +207,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="sc">-</span>n_valid_checks, <span class="sc">~</span> <span class="fu">ifelse</span>(.x, <span class="st">"✅"</span>, <span class="st">"❌"</span>))) <span class="sc">%&gt;%</span> </span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  DT<span class="sc">::</span><span class="fu">datatable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div class="datatables html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-ee7e9b7a2f3b714f15e1" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-ee7e9b7a2f3b714f15e1">{"x":{"filter":"none","vertical":false,"data":[["AMR","Bernadette","contactdata","coronavirus","covid19.analytics","covid19italy","covid19sf","covid19swiss","dde","earlyR","epicontacts","epiflows","EpiModel","EpiNow2","episensr","epitrix","finalsize","i2extras","incidence","incidence2","linelist","malariaAtlas","nbTransmission","nosoi","o2geosocial","odin","popEpi","trending","cholera","covid19dbcand","CovidMutations","dbparser","DSAIDE","EpiEstim","mstate","outbreaks","SimInf","socialmixr","SpatialEpi","trendeval","adegenet","bets.covid19","bkmr","COVID19","EnvStats","EpiContactTrace","EpiCurve","epimdr","epitweetr","HIMA","mem","memapp","nhanesA","pomp","RSurveillance","EpiILM","EpiILMCT","argo","cmprsk","coarseDataTools","corona","covid19france","covid19us","deSolve","endtoend","Epi","epibasix","epiDisplay","epinet","epiR","EpiReport","epitools","etm","mediation","mma","NADA","outbreaker2","powerSurvEpi","R0","riskCommunicator","surveillance","TransPhylo","tsiR"],["✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],["✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","❌","✅","❌","✅","✅","✅","✅","✅","✅","✅","✅","❌","❌","✅","❌","✅","✅","✅","✅","❌","❌","❌","❌","❌","❌","✅","✅","❌","❌","✅","✅","❌","✅","❌","❌","✅","❌","✅","✅"],["✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","❌","✅","✅","✅","✅","❌","✅","✅","❌","❌","❌","❌","❌","❌","❌","❌","✅","❌","✅","❌","❌","❌","✅","❌","❌","❌","❌","❌","❌","✅","❌","❌","❌","❌","❌","❌","❌","❌","❌","✅","✅","❌","❌","❌","✅","❌","✅","❌","❌","✅","✅","✅","❌"],["✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","❌","❌","✅","✅","✅","✅","❌","✅","❌","✅","✅","✅","✅","❌","❌","❌","✅","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","✅","❌","❌","❌","✅","✅","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","✅","❌","❌","✅","❌","❌","✅","✅","✅","❌"],["✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","❌","❌","❌","✅","✅","✅","❌","✅","✅","❌","✅","✅","✅","✅","✅","✅","✅","❌","✅","✅","✅","❌","✅","✅","✅","✅","❌","✅","✅","❌","✅","✅","✅","✅","❌","✅","✅","✅","❌","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","❌"],[5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,4,4,4,4,4,4,4,4,4,4,4,4,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,2,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>has_github_url<\/th>\n      <th>uses_roxygen<\/th>\n      <th>has_knitr_vignette<\/th>\n      <th>uses_testing<\/th>\n      <th>has_no_deprecated<\/th>\n      <th>n_valid_checks<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":6},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-7076df701e267a50dfbe" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-7076df701e267a50dfbe">{"x":{"filter":"none","vertical":false,"data":[["AMR","apisensr","Bernadette","cfr","contactdata","coronavirus","covid19.analytics","covid19italy","covid19sf","covid19swiss","dde","earlyR","epicontacts","epiflows","EpiModel","EpiNow2","episensr","epitrix","finalsize","i2extras","incidence","incidence2","linelist","malariaAtlas","nbTransmission","nosoi","o2geosocial","odin","popEpi","trending","cholera","covid19br","covid19dbcand","CovidMutations","dbparser","DSAIDE","EpiEstim","EpiSignalDetection","mstate","outbreaks","SimInf","socialmixr","SpatialEpi","trendeval","adegenet","bets.covid19","bkmr","COVID19","EnvStats","EpiContactTrace","EpiCurve","epimdr","epitweetr","HIMA","mem","memapp","nhanesA","pomp","R0","RSurveillance","EpiILM","EpiILMCT","argo","cmprsk","coarseDataTools","corona","covid19france","covid19us","deSolve","endtoend","Epi","epibasix","epiDisplay","epinet","epiR","EpiReport","epitools","etm","mediation","mma","modelSSE","NADA","outbreaker2","powerSurvEpi","riskCommunicator","surveillance","TransPhylo","tsiR"],["✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],["✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","❌","✅","❌","✅","✅","✅","✅","✅","✅","✅","✅","✅","❌","❌","✅","❌","✅","✅","✅","✅","❌","❌","❌","❌","❌","❌","✅","✅","❌","❌","✅","✅","✅","❌","✅","❌","✅","❌","✅","✅"],["✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","❌","✅","❌","✅","✅","✅","✅","✅","❌","✅","✅","❌","❌","❌","❌","❌","❌","❌","❌","✅","❌","✅","❌","❌","❌","✅","❌","❌","❌","❌","❌","❌","❌","✅","❌","❌","❌","❌","❌","❌","❌","❌","❌","✅","✅","❌","❌","❌","✅","❌","❌","✅","❌","✅","✅","✅","❌"],["✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","❌","✅","❌","✅","✅","✅","✅","❌","❌","✅","❌","✅","✅","✅","✅","❌","❌","❌","✅","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","✅","❌","❌","❌","✅","✅","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","✅","❌","❌","❌","✅","❌","✅","✅","✅","❌"],["✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","❌","❌","❌","✅","✅","✅","✅","❌","✅","✅","❌","✅","✅","✅","✅","✅","✅","✅","❌","✅","✅","✅","❌","✅","✅","✅","✅","✅","❌","✅","✅","❌","✅","✅","✅","✅","❌","✅","✅","✅","❌","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","❌"],[5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,4,4,4,4,4,4,4,4,4,4,4,4,4,4,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,2,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>has_github_url<\/th>\n      <th>uses_roxygen<\/th>\n      <th>has_knitr_vignette<\/th>\n      <th>uses_testing<\/th>\n      <th>has_no_deprecated<\/th>\n      <th>n_valid_checks<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":6},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"has_github_url","targets":1},{"name":"uses_roxygen","targets":2},{"name":"has_knitr_vignette","targets":3},{"name":"uses_testing","targets":4},{"name":"has_no_deprecated","targets":5},{"name":"n_valid_checks","targets":6}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 </div>
@@ -250,8 +252,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="sc">-</span>n_valid_checks, <span class="sc">~</span> <span class="fu">ifelse</span>(.x, <span class="st">"✅"</span>, <span class="st">"❌"</span>))) <span class="sc">%&gt;%</span> </span>
 <span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  DT<span class="sc">::</span><span class="fu">datatable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div class="datatables html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-32da415f66c318d487ed" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-32da415f66c318d487ed">{"x":{"filter":"none","vertical":false,"data":[["coronavirus","EpiNow2","i2extras","incidence2","trendeval","trending","contactdata","covid19dbcand","covid19italy","covid19sf","covid19swiss","DSAIDE","episensr","epitrix","outbreaks","popEpi","socialmixr","AMR","COVID19","dbparser","earlyR","epicontacts","epiflows","EpiModel","incidence","nosoi","pomp","SimInf","SpatialEpi","adegenet","cholera","EnvStats","EpiContactTrace","mstate","nhanesA","bets.covid19","bkmr","EpiCurve","EpiILM","EpiILMCT","epimdr","HIMA","mem","memapp","nbTransmission","o2geosocial","RSurveillance"],["✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","❌","❌","❌","✅","✅","✅","✅","❌","✅","❌","❌","✅","✅","❌","✅","❌","❌","❌","✅","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌"],["✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","❌","❌","✅","✅","✅","✅","❌","✅","❌","❌","❌","❌","✅","❌","❌","✅","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌"],["✅","✅","✅","✅","✅","✅","❌","✅","❌","❌","❌","✅","✅","❌","❌","❌","✅","✅","❌","✅","❌","❌","✅","❌","✅","✅","❌","❌","❌","❌","❌","❌","❌","✅","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌"],["✅","✅","✅","✅","✅","✅","✅","❌","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","❌","✅","✅","❌","✅","❌","✅","✅","✅","✅","✅","❌","✅","✅","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌"],[4,4,4,4,4,4,3,3,3,3,3,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>has_rmd_readme<\/th>\n      <th>has_md_license<\/th>\n      <th>has_pkgdown<\/th>\n      <th>has_gha<\/th>\n      <th>n_valid_checks<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":5},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-e852c884f04ee92391f8" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-e852c884f04ee92391f8">{"x":{"filter":"none","vertical":false,"data":[["coronavirus","covid19br","EpiNow2","i2extras","incidence2","socialmixr","trendeval","trending","contactdata","covid19dbcand","covid19italy","covid19sf","covid19swiss","dbparser","DSAIDE","EpiModel","episensr","epitrix","incidence","outbreaks","popEpi","AMR","apisensr","COVID19","earlyR","epicontacts","epiflows","nosoi","pomp","SimInf","SpatialEpi","adegenet","cholera","EnvStats","EpiContactTrace","mstate","nhanesA","R0","bets.covid19","bkmr","EpiCurve","EpiILM","EpiILMCT","epimdr","HIMA","mem","memapp","nbTransmission","o2geosocial","RSurveillance"],["✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","❌","✅","✅","✅","✅","✅","❌","✅","❌","✅","✅","✅","❌","❌","✅","✅","❌","✅","❌","❌","❌","✅","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌"],["✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","❌","❌","✅","❌","✅","❌","✅","✅","❌","❌","✅","❌","❌","❌","❌","✅","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌"],["✅","✅","✅","✅","✅","✅","✅","✅","❌","✅","❌","❌","❌","✅","✅","✅","✅","❌","✅","❌","❌","✅","❌","❌","❌","❌","✅","✅","❌","❌","❌","❌","❌","❌","❌","✅","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌"],["✅","✅","✅","✅","✅","✅","✅","✅","✅","❌","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","✅","❌","✅","✅","✅","✅","✅","❌","✅","✅","❌","❌","✅","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌","❌"],[4,4,4,4,4,4,4,4,3,3,3,3,3,3,3,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>has_rmd_readme<\/th>\n      <th>has_md_license<\/th>\n      <th>has_pkgdown<\/th>\n      <th>has_gha<\/th>\n      <th>n_valid_checks<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":5},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"has_rmd_readme","targets":1},{"name":"has_md_license","targets":2},{"name":"has_pkgdown","targets":3},{"name":"has_gha","targets":4},{"name":"n_valid_checks","targets":5}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 </div>
@@ -286,11 +288,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 `binwidth`, `bins`, and `pad`</code></pre>
 </div>
 <div class="cell-output-display">
-<div id="fig-539a35d47e664c97a50115a146a7f1bd-1" class="quarto-figure quarto-figure-center anchored" width="672">
-<figure class="quarto-float quarto-float-fig figure">
 <div>
-<img src="index_files/figure-html/unnamed-chunk-9-1.png" id="fig-539a35d47e664c97a50115a146a7f1bd-1" class="img-fluid figure-img" width="672">
-</div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -301,11 +301,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">title =</span> <span class="fu">paste</span>(<span class="st">"Score distribution in the"</span>, params<span class="sc">$</span>ctv, <span class="st">"CRAN Task View"</span>)</span>
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div id="fig-539a35d47e664c97a50115a146a7f1bd-2" class="quarto-figure quarto-figure-center anchored" width="672">
-<figure class="quarto-float quarto-float-fig figure">
 <div>
-<img src="index_files/figure-html/unnamed-chunk-9-2.png" id="fig-539a35d47e664c97a50115a146a7f1bd-2" class="img-fluid figure-img" width="672">
-</div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-9-2.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -330,11 +328,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 `binwidth`, `bins`, and `pad`</code></pre>
 </div>
 <div class="cell-output-display">
-<div id="fig-539a35d47e664c97a50115a146a7f1bd-3" class="quarto-figure quarto-figure-center anchored" width="672">
-<figure class="quarto-float quarto-float-fig figure">
 <div>
-<img src="index_files/figure-html/unnamed-chunk-9-3.png" id="fig-539a35d47e664c97a50115a146a7f1bd-3" class="img-fluid figure-img" width="672">
-</div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-9-3.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -379,18 +375,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -422,7 +407,47 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
   function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
@@ -457,7 +482,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
     });
   }
   const xrefs = window.document.querySelectorAll('a.quarto-xref');
@@ -472,15 +501,28 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       }
     }
     stripColumnClz(note)
-    if (id.startsWith('sec-')) {
+    if (id === null || id.startsWith('sec-')) {
       // Special case sections, only their first couple elements
       const container = document.createElement("div");
       if (note.children && note.children.length > 2) {
-        for (let i = 0; i < 2; i++) {
-          container.appendChild(note.children[i].cloneNode(true));
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
         }
         return container.innerHTML
       } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
         return note.innerHTML;
       }
     } else {
@@ -489,7 +531,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (anchorLink) {
         anchorLink.remove();
       }
-      return note.innerHTML;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
     }
   }
   for (var i=0; i<xrefs.length; i++) {
@@ -531,6 +581,29 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             instance.show();
           });
         }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
       }
     }, function(instance) {
     });
@@ -606,7 +679,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     window.addEventListener(
       "resize",
       throttle(() => {
-        console.log("RESIZE");
         elRect = undefined;
         if (selectedAnnoteEl) {
           selectCodeLines(selectedAnnoteEl);
