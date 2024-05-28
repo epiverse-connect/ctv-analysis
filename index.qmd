@@ -138,7 +138,7 @@ all_checks |>
     .keep = "unused"
   ) |>
   ggplot(aes(x = passed, y = forcats::fct_reorder(check, passed))) +
-  geom_histogram(stat = "identity") +
+  geom_col() +
   labs(
     x = "Number of passing packages",
     y = "Check",
