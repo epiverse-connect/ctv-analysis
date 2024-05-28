@@ -10,6 +10,12 @@ params:
 ---
 
 ```{r}
+knitr::opts_chunk$set(
+  echo = FALSE
+)
+```
+
+```{r}
 tf <- tempfile(fileext = ".md")
 download.file(
   paste0(
@@ -31,11 +37,9 @@ library(purrr)
 ```
 
 ```{r}
-(
-  ctv_pkg_descriptions <- ctv::read.ctv(tf) %>%
-    purrr::pluck("packagelist", "name") %>%
-    pkgsearch::cran_packages()
-)
+ctv_pkg_descriptions <- ctv::read.ctv(tf) %>%
+  purrr::pluck("packagelist", "name") %>%
+  pkgsearch::cran_packages()
 ```
 
 ## Best practices
