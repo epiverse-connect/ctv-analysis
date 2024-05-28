@@ -103,9 +103,11 @@ gh_checks <- ctv_pkg_descriptions %>%
 all_checks <- merge(
   gh_checks,
   desc_checks,
-  by = 0
+  all = TRUE,
+  by = 0,
 ) |>
   mutate(package = as.character(Row.names), .keep = "unused")
+n_pkgs <- nrow(all_checks)
 ```
 
 ```{r}
@@ -128,7 +130,7 @@ all_checks |>
   as.data.frame() |>
   tibble::rownames_to_column("check") |>
   mutate(
-    passed = rowSums(pick(-check)),
+    passed = rowSums(pick(-check), na.rm = TRUE) / n_pkgs,
     .keep = "unused"
   ) |>
   ggplot(aes(x = passed, y = forcats::fct_reorder(check, passed))) +
