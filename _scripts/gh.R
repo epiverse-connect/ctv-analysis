@@ -1,4 +1,5 @@
-# This is a collection of scripts that will connect to the github api and check for the existance of a file in a repo.
+# This is a collection of scripts that will connect to the github api and check
+# for the existence of a file in a repo.
 
 #' Github urls need to be split to user and repo to make the api call work.
 #' @param url The url to split
@@ -19,18 +20,23 @@ gh_split_url <- function(url) {
 }
 
 #' Check if a file exists in a repo
-#' The file is handed to the funcion as a string
+#' The file is handed to the function as a string
 #' @param file The file to check for
 #' @param repo The repo to check in
 #' @param owner The owner of the repo
 #' @return TRUE if the file exists, FALSE if it does not
 gh_file_exists <- function(file, repo) {
   # Create the url
-  url <- paste0("https://api.github.com/repos/", repo, "/contents/", file)
+  url <- file.path("https://api.github.com/repos", repo, "contents", file)
   # Get the contents of the url.
   # If the file throws a 404 error, file exists will be False
   # If the file does not throw a 404 error, file exists will be True
-  file_exists <- !http_error(httr::GET(url, httr::add_headers(Authorization = paste0("token ", gh::gh_token()))))
+  file_exists <- !httr::http_error(
+    httr::GET(
+      url,
+      httr::add_headers(Authorization = paste0("token ", gh::gh_token()))
+    )
+  )
   # Return the result
   return(file_exists)
 }
