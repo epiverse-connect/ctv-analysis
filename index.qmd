@@ -118,7 +118,7 @@ all_checks |>
   as.data.frame() |>
   tibble::rownames_to_column("check") |>
   mutate(
-    passed = rowSums(pick(-check), na.rm = TRUE) / n_pkgs,
+    passed = rowSums(pick(-check), na.rm = TRUE) / n_pkgs * 100,
     .keep = "unused"
   ) |>
   ggplot(aes(x = passed, y = forcats::fct_reorder(check, passed))) +
