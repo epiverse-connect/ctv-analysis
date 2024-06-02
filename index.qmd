@@ -37,8 +37,10 @@ library(purrr)
 ```
 
 ```{r}
-ctv_pkg_descriptions <- ctv::read.ctv(tf) %>%
-  purrr::pluck("packagelist", "name") %>%
+ctv_pkgs <- ctv::read.ctv(tf) %>%
+  purrr::pluck("packagelist", "name")
+
+ctv_pkg_descriptions <- ctv_pkgs %>%
   pkgsearch::cran_packages()
 ```
 
@@ -62,11 +64,14 @@ We can already pull some useful information for the `DESCRIPTION` file, which is
 ```{r}
 desc_checks <- ctv_pkg_descriptions %>%
   transmute(
+    package            = Package,
     has_github_url     = startsWith(URL, "https://github.com/") | startsWith(BugReports, "https://github.com/"),
     uses_roxygen       = !is.na(RoxygenNote),
     has_knitr_vignette = grepl("knitr", VignetteBuilder),
     uses_testing       = purrr::map_lgl(dependencies, ~ any(.x$package %in% c("testthat", "testit", "unitizer", "RUnit", "tinytest"))),
-    has_no_deprecated  = !purrr::map_lgl(dependencies, ~ any(.x$package %in% c("RUnit", "XML", "RCurl", "plyr", "reshape2")))
+    has_no_deprecated  = !purrr::map_lgl(dependencies, ~ any(.x$package %in% c("RUnit", "XML", "RCurl", "plyr", "reshape2"))),
+    uses_authors_r     = !is.na(`Authors@R`),
+    uses_orcid         = grepl("<https://orcid.org/", Author, fixed = TRUE)
   )
 ```
 
@@ -83,19 +88,14 @@ source("_scripts/gh.R")
 ```
 
 ```{r}
-gh_checks <- ctv_pkg_descriptions %>%
+gh_checks <- read.csv("https://raw.githubusercontent.com/cran-task-views/Epidemiology/main/data/source_repositories.csv") %>%
   transmute(
-    github_repo = dplyr::coalesce(
-      stringr::str_match(URL, "https://github.com/(\\w+/\\w+)")[, 2],
-      stringr::str_match(BugReports, "https://github.com/(\\w+/\\w+)/issues")[, 2]
-    )
-  ) %>%
-  na.omit() %>%
-  transmute(
+    package        = package,
     has_rmd_readme = purrr::map_lgl(github_repo, ~ gh_file_exists("README.Rmd", .x)),
     has_md_license = purrr::map_lgl(github_repo, ~ gh_file_exists("LICENSE.md", .x)),
     has_pkgdown    = purrr::map_lgl(github_repo, ~ any(gh_file_list_exists(c("_pkgdown.yml", "_pkgdown.yaml", "pkgdown/pkgdown.yml"), .x))),
-    has_gha        = purrr::map_lgl(github_repo, ~ gh_file_exists(".github/workflows", .x))
+    has_gha        = purrr::map_lgl(github_repo, ~ gh_file_exists(".github/workflows", .x)),
+    has_news       = purrr::map_lgl(github_repo, ~ gh_file_exists("NEWS.md", .x))
   )
 ```
 
@@ -104,9 +104,8 @@ all_checks <- merge(
   gh_checks,
   desc_checks,
   all = TRUE,
-  by = 0,
-) |>
-  mutate(package = as.character(Row.names), .keep = "unused")
+  by = "package"
+)
 n_pkgs <- nrow(all_checks)
 ```
 
