@@ -148,6 +148,49 @@ pkg_versions <- ctv_pkgs |>
   dplyr::mutate(date = lubridate::ymd_hms(date))
 ```
 
+```{r}
+pkg_versions |> 
+  dplyr::group_by(Package) |> 
+  summarise(
+    maintainer_change = n_distinct(stringr::str_extract(Maintainer, "^[^ ]+")) - 1
+  ) |> 
+  ggplot(aes(x = maintainer_change)) +
+    geom_histogram() +
+    labs(x = "Number of maintainer transitions over package lifetime")
+```
+
+```{r}
+maintainers <- pkg_versions |> 
+  group_by(name = trimws(stringr::str_extract(Maintainer, "^[^<]+"))) |> 
+  summarise(
+    maintainer_since = lubridate::year(min(date))
+  )
+
+authors <- pkg_versions |> 
+  dplyr::mutate(
+    Author = gsub("<U+000a>", " ", Author, fixed = TRUE),
+    parsed_authors_r = purrr::map(`Authors@R`, ~ tryCatch(format(eval(parse(text = .x)), include = c("given", "family")), error = function(e) NA)),
+    parsed_authors = strsplit(gsub("<[^>]*>", "", gsub("\\([^)]*\\)", "", gsub("\\[(\\w| |,)*\\]", "", Author))), "[[:space:]]*,[[:space:]]*"),
+    auts = coalesce(parsed_authors, parsed_authors_r)
+  ) |> 
+  tidyr::unnest(cols = auts) |> 
+  dplyr::mutate(auts = stringr::str_trim(auts)) |>
+  group_by(name = auts) |> 
+  summarise(
+    author_since = lubridate::year(min(date))
+  )
+
+full_join(maintainers, authors, by = "name") |>
+  tidyr::pivot_longer(
+    cols = c(maintainer_since, author_since),
+    names_to = "role",
+    values_to = "year"
+  ) |> 
+  ggplot(aes(x = year, fill = role)) +
+    geom_histogram() +
+    labs(x = "Recruitement of new maintainers in the ecosystem")
+```
+
 # Releases and archivals
 
 ```{r}
