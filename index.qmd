@@ -125,12 +125,17 @@ all_checks |>
     passed = rowSums(pick(-check), na.rm = TRUE) / n_pkgs * 100,
     .keep = "unused"
   ) |>
-  ggplot(aes(x = passed, y = forcats::fct_reorder(check, passed))) +
-  geom_col() +
-  labs(
-    x = "Number of passing packages",
-    y = "Check",
-    title = paste("Number of", params$ctv, "CRAN Task View packages passing checks")
+  arrange(desc(passed)) |> 
+  gt::gt() |> 
+  gt::fmt_number(
+    columns = passed,
+    decimals = 0,
+    pattern = "{x}%"
+  ) |> 
+  gt::data_color(
+    method = "numeric",
+    palette = "viridis",
+    domain = c(0, 100)
   )
 ```
 
