@@ -136,9 +136,38 @@ all_checks |>
 
 # Authorship trends and sustainability
 
+```{r}
+pkg_versions <- ctv_pkgs |> 
+  purrr::map(pkgsearch::cran_package_history) |> 
+  dplyr::bind_rows() |> 
+  dplyr::mutate(date = lubridate::ymd_hms(date))
+```
+
 # Releases and archivals
+
+```{r}
+pkg_versions |> 
+  dplyr::mutate(first_release = Version == min(Version), .by = Package) |>
+  dplyr::group_by(year = lubridate::year(date)) |> 
+  summarise(
+    updates = sum(!first_release),
+    `first releases` = sum(first_release),
+    .groups = "drop"
+  ) |> 
+  tidyr::pivot_longer(
+    cols = c(updates, `first releases`),
+    names_to = "release_type",
+    values_to = "yearly_releases"
+  ) |>
+  ggplot(aes(x = factor(year), y = yearly_releases, fill = release_type)) +
+    geom_col() +
+    labs(x = "Year", y = "Number of releases", fill = "") +
+    theme(legend.position = "bottom") +
+    scale_fill_brewer(palette = "Set1")
+```
 
 # Scaffolding and dependencies
 
 # Popularity
+
 
