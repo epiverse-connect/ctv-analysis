@@ -5,6 +5,7 @@ author:
   - "Chathura Edirisuriya"
   - "Hugo Gruson"
 date: last-modified
+format: "dashboard"
 params:
   ctv: "Epidemiology"
 ---
@@ -34,18 +35,21 @@ library(ctv)
 library(pkgsearch)
 library(dplyr)
 library(purrr)
+library(ggplot2)
+theme_set(theme_minimal())
 ```
 
 ```{r}
 ctv_pkgs <- ctv::read.ctv(tf) %>%
-  purrr::pluck("packagelist", "name")
+  purrr::pluck("packagelist", "name") 
 
 ctv_pkg_descriptions <- ctv_pkgs %>%
   pkgsearch::cran_packages()
 ```
 
-## Best practices
+# Best practices
 
+<!--
 This list of automated checks for modern best practices in R package development is inspired by standards defined by various R communities such as [rOpenSci](https://ropensci.org) and [Epiverse-TRACE](https://epiverse-trace.github.io/).
 
 The checks performed here should not be taken as a direct measure of code quality, but they reflect adherence to community established best standards. These standards are usually the fruit of extensive experience from these communities and generally help to produce higher-quality, more usable and maintainable code.
@@ -59,7 +63,7 @@ We can already pull some useful information for the `DESCRIPTION` file, which is
 - uses testing framework: modern standards in software development recommend the use of regression and unit tests; these are tests that will ensure that your package remains fully functioning after any change to the code. This is tested by checking for the presence of one testing framework (testthat, testit, unitizer, RUnit or tinytest) in the package dependencies.
 - no deprecated dependencies: some R packages (RUnit, XML, RCurl, plyr, reshape2) are known to have been superseded or abandoned by the maintainers. They will not include any new features and will at best receive punctual bug fixes. To limit technical debt, it is recommended to depend on more modern and actively developed alternatives.
 - has vignette: vignettes are a long form of documentation for R packages. They often include more detailed examples or walkthroughs. To improve usability of the package, at least one vignette should be included. The recommended engine to build vignettes is the knitr R package. Compliance with this check is assessed by the presence of the knitr package in the `VignetteBuilder` field. 
-
+-->
 
 ```{r}
 desc_checks <- ctv_pkg_descriptions %>%
@@ -75,12 +79,14 @@ desc_checks <- ctv_pkg_descriptions %>%
   )
 ```
 
+<!--
 For package that specify the URL to their GitHub repository either in the `URL` or the `BugReports` `DESCRIPTION` field, we can pull additional information and perform further checks:
 
 - has Rmd README: all projects should include a README to briefly introduce visitors to the project scope and goals. Here, we go one step further by checking if the packages include a README in Rmarkdown format. This is the current best practice in R package development because it allows package authors to include code examples with their output. We check here for the existence of this `README.Rmd` file at the root of the GitHub repository.
 - has md license: while it is not strictly necessary for R packages to include a separate license file (it is technically sufficient to only mention the license in the `DESCRIPTION`), it is considered best practice. We check here for the presence of a `LICENSE.md` file at the root of the GitHub repository. The markdown syntax makes it more user-friendly and corresponds to the version automatically created by common R developer tools. 
 - uses pkgdown: the pkgdown R package is a documentation framework for R packages (alternatives in other languages include readthedocs, or mkdocs). This creates a website to host the documentation in a visually pleasing and accessible way. We check compliance by testing for the presence of a mandatory pkgdown configuration file in the repository.
 - uses GitHub Actions: on top of tests mentioned earlier, it is good practice to set up an automated system to run these checks on each code change. A popular framework to do so are GitHub Actions, defined in the `.github/workflows/` folder. We check for the use of GitHub Actions in packages via the presence of this folder.
+-->
 
 ```{r load-gh-helpers}
 library(httr)
@@ -110,7 +116,6 @@ n_pkgs <- nrow(all_checks)
 ```
 
 ```{r}
-library(ggplot2)
 all_checks |>
   tibble::column_to_rownames("package") |>
   t() |>
@@ -128,3 +133,12 @@ all_checks |>
     title = paste("Number of", params$ctv, "CRAN Task View packages passing checks")
   )
 ```
+
+# Authorship trends and sustainability
+
+# Releases and archivals
+
+# Scaffolding and dependencies
+
+# Popularity
+
