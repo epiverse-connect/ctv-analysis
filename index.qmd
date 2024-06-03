@@ -5,7 +5,9 @@ author:
   - "Chathura Edirisuriya"
   - "Hugo Gruson"
 date: last-modified
-format: "dashboard"
+format: 
+  dashboard:
+    orientation: columns
 params:
   ctv: "Epidemiology"
 ---
@@ -47,7 +49,7 @@ ctv_pkg_descriptions <- ctv_pkgs %>%
   pkgsearch::cran_packages()
 ```
 
-# Best practices
+## Best practices {width=33%}
 
 <!--
 This list of automated checks for modern best practices in R package development is inspired by standards defined by various R communities such as [rOpenSci](https://ropensci.org) and [Epiverse-TRACE](https://epiverse-trace.github.io/).
@@ -93,7 +95,7 @@ library(httr)
 source("_scripts/gh.R")
 ```
 
-```{r}
+```{r, cache = TRUE}
 gh_checks <- read.csv("https://raw.githubusercontent.com/cran-task-views/Epidemiology/main/data/source_repositories.csv") %>%
   transmute(
     package        = package,
@@ -139,7 +141,7 @@ all_checks |>
   )
 ```
 
-# Authorship trends and sustainability
+## Authorship trends and sustainability {width=33%}
 
 ```{r}
 pkg_versions <- ctv_pkgs |> 
@@ -169,12 +171,19 @@ maintainers <- pkg_versions |>
 authors <- pkg_versions |> 
   dplyr::mutate(
     Author = gsub("<U+000a>", " ", Author, fixed = TRUE),
+    Author = gsub(" and ", ", ", Author, fixed = TRUE),
+    Author = gsub("\\bwith contributions (of|from|by)\\b", ", ", Author, fixed = TRUE),
     parsed_authors_r = purrr::map(`Authors@R`, ~ tryCatch(format(eval(parse(text = .x)), include = c("given", "family")), error = function(e) NA)),
-    parsed_authors = strsplit(gsub("<[^>]*>", "", gsub("\\([^)]*\\)", "", gsub("\\[(\\w| |,)*\\]", "", Author))), "[[:space:]]*,[[:space:]]*"),
+    parsed_authors = strsplit(gsub("<[^>]*>", "", gsub("\\([^)]*\\)", "", gsub("\\[(\\w| |,)*\\]", "", Author))), "[[:space:]]*,+[[:space:]]*"),
     auts = coalesce(parsed_authors, parsed_authors_r)
   ) |> 
   tidyr::unnest(cols = auts) |> 
-  dplyr::mutate(auts = stringr::str_trim(auts)) |>
+  dplyr::mutate(
+    auts = stringr::str_trim(auts),
+    auts = stringi::stri_trans_general(auts, "ASCII"),
+    auts = stringr::str_remove_all(auts, "[[:punct:]]")
+#    auts = purrr::map_chr(auts, possibly(~ paste(as.person(.x)$given[1], as.person(.x)$family), otherwise = ""))
+  ) |>
   group_by(name = auts) |> 
   summarise(
     author_since = lubridate::year(min(date))
@@ -188,10 +197,10 @@ full_join(maintainers, authors, by = "name") |>
   ) |> 
   ggplot(aes(x = year, fill = role)) +
     geom_histogram() +
-    labs(x = "Recruitement of new maintainers in the ecosystem")
+    labs(x = "Recruitement of new maintainers in the ecosystem") +
+    theme(legend.position = "bottom") +
+    scale_fill_brewer(palette = "Set1")
 ```
-
-# Releases and archivals
 
 ```{r}
 pkg_versions |> 
@@ -214,8 +223,10 @@ pkg_versions |>
     scale_fill_brewer(palette = "Set1")
 ```
 
-# Scaffolding and dependencies
+## Dependencies and popularity {width=33%}
 
-# Popularity
+```{r}
+plot(cars)
+```
 
 
