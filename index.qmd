@@ -147,23 +147,15 @@ all_checks |>
 pkg_versions <- ctv_pkgs |> 
   purrr::map(pkgsearch::cran_package_history) |> 
   dplyr::bind_rows() |> 
-  dplyr::mutate(date = lubridate::ymd_hms(date))
-```
-
-```{r}
-pkg_versions |> 
-  dplyr::group_by(Package) |> 
-  summarise(
-    maintainer_change = n_distinct(stringr::str_extract(Maintainer, "^[^ ]+")) - 1
-  ) |> 
-  ggplot(aes(x = maintainer_change)) +
-    geom_histogram() +
-    labs(x = "Number of maintainer transitions over package lifetime")
+  dplyr::mutate(
+    date = lubridate::ymd_hms(date),
+    maintainer = trimws(stringr::str_extract(Maintainer, "^[^<]+"))
+  )
 ```
 
 ```{r}
 maintainers <- pkg_versions |> 
-  group_by(name = trimws(stringr::str_extract(Maintainer, "^[^<]+"))) |> 
+  group_by(name = maintainer) |> 
   summarise(
     maintainer_since = lubridate::year(min(date))
   )
@@ -199,20 +191,25 @@ full_join(maintainers, authors, by = "name") |>
     geom_histogram() +
     labs(x = "Recruitement of new maintainers in the ecosystem") +
     theme(legend.position = "bottom") +
-    scale_fill_brewer(palette = "Set1")
+    scale_fill_brewer(palette = "Set2")
 ```
 
 ```{r}
 pkg_versions |> 
-  dplyr::mutate(first_release = Version == min(Version), .by = Package) |>
+  dplyr::mutate(
+    first_release = Version == min(Version), 
+    maintainer_change = maintainer != dplyr::lag(maintainer),
+    .by = Package
+  ) |>
   dplyr::group_by(year = lubridate::year(date)) |> 
   summarise(
     updates = sum(!first_release),
     `first releases` = sum(first_release),
+    `maintainer transitions` = sum(maintainer_change),
     .groups = "drop"
   ) |> 
   tidyr::pivot_longer(
-    cols = c(updates, `first releases`),
+    cols = c(updates, `first releases`, `maintainer transitions`),
     names_to = "release_type",
     values_to = "yearly_releases"
   ) |>
