@@ -1,9 +1,6 @@
 ---
 title: "`r params$ctv` Task View analysis"
-author: 
-  - "James Baker"
-  - "Chathura Edirisuriya"
-  - "Hugo Gruson"
+author: "James Baker, Chathura Edirisuriya, Hugo Gruson"
 logo: images/logo_white.svg
 date: last-modified
 format: 
