@@ -23,6 +23,11 @@ jobs:
 
       - uses: r-lib/actions/setup-renv@v2
 
+      - shell: Rscript {0}
+        run: |
+          yaml::read_yaml("settings.yml")$view |>
+            ctv::install.views()
+
       - name: Publish to GitHub Pages (and render)
         uses: quarto-dev/quarto-actions/publish@v2
         with:

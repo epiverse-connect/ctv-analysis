@@ -10,8 +10,6 @@ format:
 theme: 
   - cosmo
   - custom.scss
-params:
-  ctv: "Epidemiology"
 ---
 
 ```{r}
@@ -25,7 +23,7 @@ tf <- tempfile(fileext = ".md")
 download.file(
   paste0(
     "https://github.com/cran-task-views/",
-    params$ctv,
+    yaml::read_yaml("settings.yml")$view,
     "/raw/main/",
     params$ctv,
     ".md"
