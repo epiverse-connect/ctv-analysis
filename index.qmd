@@ -6,6 +6,7 @@ date: last-modified
 format: 
   dashboard:
     orientation: columns
+    nav-buttons: github
 theme: 
   - cosmo
   - custom.scss
