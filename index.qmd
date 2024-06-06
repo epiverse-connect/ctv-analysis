@@ -227,6 +227,20 @@ full_join(maintainers, authors, by = "name") |>
 ```
 
 ```{r}
+source("_scripts/parse_archive.R")
+
+yearly_archivals <- archive_df |> 
+  filter(package %in% ctv_pkgs) |> 
+  dplyr::mutate(
+    date = lubridate::ymd(archivals),
+    year = lubridate::year(date),
+    .keep = "unused"
+  ) |> 
+  count(year, name = "archivals") |> 
+  dplyr::mutate(archivals = -archivals)
+```
+
+```{r}
 pkg_versions |> 
   dplyr::mutate(
     first_release = Version == min(Version), 
@@ -240,8 +254,9 @@ pkg_versions |>
     `maintainer transitions` = sum(maintainer_change),
     .groups = "drop"
   ) |> 
+  dplyr::full_join(yearly_archivals, by = "year") |> 
   tidyr::pivot_longer(
-    cols = c(updates, `first releases`, `maintainer transitions`),
+    cols = c(updates, `first releases`, `maintainer transitions`, archivals),
     names_to = "release_type",
     values_to = "yearly_releases"
   ) |>
