@@ -53,8 +53,18 @@ ctv_pkg_descriptions <- ctv_pkgs %>%
 
 ## Best practices {width=33%}
 
+### Row {height=20%}
 
+```{r}
+#| content: valuebox
+#| title: "Number of packages"
+list(
+  color = "#10BED2",
+  value = nrow(ctv_pkg_descriptions)
+)
+```
 
+### Row
 
 ```{r}
 desc_checks <- ctv_pkg_descriptions %>%
