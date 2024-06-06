@@ -97,13 +97,26 @@ gh_checks <- read.csv("https://raw.githubusercontent.com/cran-task-views/Epidemi
   )
 ```
 
+```{r, cache = TRUE}
+extra_checks <- ctv_pkg_descriptions |> 
+  transmute(
+    package = Package,
+    has_doi = purrr::map_lgl(package, ~ !is.null(citation(package = .x)$doi))
+  )
+```
+
 ```{r}
 all_checks <- merge(
   gh_checks,
   desc_checks,
   all = TRUE,
   by = "package"
-)
+) |> 
+  merge(
+    extra_checks,
+    all = TRUE,
+    by = "package"
+  )
 n_pkgs <- nrow(all_checks)
 ```
 
@@ -121,7 +134,8 @@ check_descriptions <- tribble(
   "has_md_license", "Has LICENSE.md",
   "uses_pkgdown", "Uses pkgdown",
   "uses_gha", "Uses GitHub Actions",
-  "has_news", "Has NEWS.md"
+  "has_news", "Has NEWS.md",
+  "has_doi", "A DOI is provided for archival and citation"
 )
 ```
 
