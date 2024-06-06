@@ -188,9 +188,17 @@ full_join(maintainers, authors, by = "name") |>
     names_to = "role",
     values_to = "year"
   ) |> 
+  dplyr::mutate(
+    role = tools::toTitleCase(gsub("_since$", "", role))
+  ) |> 
   ggplot(aes(x = year, fill = role)) +
     geom_histogram() +
-    labs(x = "Recruitement of new maintainers in the ecosystem") +
+    labs(
+      title = "Recruitement of new authors & maintainers in the ecosystem",
+      x = "Year",
+      y = "Number of new authors/maintainers",
+      fill = ""
+    ) +
     theme(legend.position = "bottom") +
     scale_fill_brewer(palette = "Set2")
 ```
@@ -216,7 +224,11 @@ pkg_versions |>
   ) |>
   ggplot(aes(x = factor(year), y = yearly_releases, fill = release_type)) +
     geom_col() +
-    labs(x = "Year", y = "Number of releases", fill = "") +
+    labs(
+      title = "New releases or package updates",
+      x = "Year", y = "Number of releases",
+      fill = ""
+    ) +
     theme(legend.position = "bottom") +
     scale_fill_brewer(palette = "Set1")
 ```
