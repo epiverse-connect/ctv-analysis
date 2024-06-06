@@ -193,7 +193,7 @@ full_join(maintainers, authors, by = "name") |>
     role = tools::toTitleCase(gsub("_since$", "", role))
   ) |> 
   ggplot(aes(x = year, fill = role)) +
-    geom_histogram() +
+    geom_histogram(binwidth = 1) +
     labs(
       title = "Recruitement of new authors & maintainers in the ecosystem",
       x = "Year",
