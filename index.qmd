@@ -53,21 +53,8 @@ ctv_pkg_descriptions <- ctv_pkgs %>%
 
 ## Best practices {width=33%}
 
-<!--
-This list of automated checks for modern best practices in R package development is inspired by standards defined by various R communities such as [rOpenSci](https://ropensci.org) and [Epiverse-TRACE](https://epiverse-trace.github.io/).
 
-The checks performed here should not be taken as a direct measure of code quality, but they reflect adherence to community established best standards. These standards are usually the fruit of extensive experience from these communities and generally help to produce higher-quality, more usable and maintainable code.
 
-It is important to note that statistical or mathematical correctness is not assessed in any way here. This project focuses exclusively on packaging and software development best practices.
-
-We can already pull some useful information for the `DESCRIPTION` file, which is the foundation of any R package. We perform the following checks:
-
-- has GitHub URLs: does the package include a link to the source code on GitHub? Even though all CRAN packages are open-source, this demonstrates a commitment to facilitate bug report and community involvement in the project. This is tested by checking for a string starting with "https://github.com/" in the `URL` or `BugReports` fields.
-- uses roxygen: [roxygen2](https://roxygen2.r-lib.org/) is an R package for documentation. It allows package developers to write their documentation next to the function definition (similar to [python's docstrings](https://en.wikipedia.org/wiki/Docstring)). It is considered best practice because it reduces the risk of the documentation going stale and its markdown syntax makes it simpler to produce high-quality documentation. This is checked by the presence of the custom `RoxygenNote` field in the `DESCRIPTION` file.
-- uses testing framework: modern standards in software development recommend the use of regression and unit tests; these are tests that will ensure that your package remains fully functioning after any change to the code. This is tested by checking for the presence of one testing framework (testthat, testit, unitizer, RUnit or tinytest) in the package dependencies.
-- no deprecated dependencies: some R packages (RUnit, XML, RCurl, plyr, reshape2) are known to have been superseded or abandoned by the maintainers. They will not include any new features and will at best receive punctual bug fixes. To limit technical debt, it is recommended to depend on more modern and actively developed alternatives.
-- has vignette: vignettes are a long form of documentation for R packages. They often include more detailed examples or walkthroughs. To improve usability of the package, at least one vignette should be included. The recommended engine to build vignettes is the knitr R package. Compliance with this check is assessed by the presence of the knitr package in the `VignetteBuilder` field. 
--->
 
 ```{r}
 desc_checks <- ctv_pkg_descriptions %>%
@@ -83,15 +70,6 @@ desc_checks <- ctv_pkg_descriptions %>%
   )
 ```
 
-<!--
-For package that specify the URL to their GitHub repository either in the `URL` or the `BugReports` `DESCRIPTION` field, we can pull additional information and perform further checks:
-
-- has Rmd README: all projects should include a README to briefly introduce visitors to the project scope and goals. Here, we go one step further by checking if the packages include a README in Rmarkdown format. This is the current best practice in R package development because it allows package authors to include code examples with their output. We check here for the existence of this `README.Rmd` file at the root of the GitHub repository.
-- has md license: while it is not strictly necessary for R packages to include a separate license file (it is technically sufficient to only mention the license in the `DESCRIPTION`), it is considered best practice. We check here for the presence of a `LICENSE.md` file at the root of the GitHub repository. The markdown syntax makes it more user-friendly and corresponds to the version automatically created by common R developer tools. 
-- uses pkgdown: the pkgdown R package is a documentation framework for R packages (alternatives in other languages include readthedocs, or mkdocs). This creates a website to host the documentation in a visually pleasing and accessible way. We check compliance by testing for the presence of a mandatory pkgdown configuration file in the repository.
-- uses GitHub Actions: on top of tests mentioned earlier, it is good practice to set up an automated system to run these checks on each code change. A popular framework to do so are GitHub Actions, defined in the `.github/workflows/` folder. We check for the use of GitHub Actions in packages via the presence of this folder.
--->
-
 ```{r load-gh-helpers}
 library(httr)
 source("_scripts/gh.R")
@@ -103,8 +81,8 @@ gh_checks <- read.csv("https://raw.githubusercontent.com/cran-task-views/Epidemi
     package        = package,
     has_rmd_readme = purrr::map_lgl(github_repo, ~ gh_file_exists("README.Rmd", .x)),
     has_md_license = purrr::map_lgl(github_repo, ~ gh_file_exists("LICENSE.md", .x)),
-    has_pkgdown    = purrr::map_lgl(github_repo, ~ any(gh_file_list_exists(c("_pkgdown.yml", "_pkgdown.yaml", "pkgdown/pkgdown.yml"), .x))),
-    has_gha        = purrr::map_lgl(github_repo, ~ gh_file_exists(".github/workflows", .x)),
+    uses_pkgdown    = purrr::map_lgl(github_repo, ~ any(gh_file_list_exists(c("_pkgdown.yml", "_pkgdown.yaml", "pkgdown/pkgdown.yml"), .x))),
+    uses_gha        = purrr::map_lgl(github_repo, ~ gh_file_exists(".github/workflows", .x)),
     has_news       = purrr::map_lgl(github_repo, ~ gh_file_exists("NEWS.md", .x))
   )
 ```
@@ -120,13 +98,33 @@ n_pkgs <- nrow(all_checks)
 ```
 
 ```{r}
+check_descriptions <- tribble(
+  ~check, ~description,
+  "has_github_url", "Has a GitHub URL",
+  "uses_roxygen", "Uses Roxygen",
+  "has_knitr_vignette", "Has a knitr vignette",
+  "uses_testing", "Uses testing package",
+  "has_no_deprecated", "Does not depend on deprecated packages (XML, RCurl, RUnit, plyr, reshape2)",
+  "uses_authors_r", "Has Authors@R field",
+  "uses_orcid", "Has ORCID in Author field",
+  "has_rmd_readme", "Has README.Rmd",
+  "has_md_license", "Has LICENSE.md",
+  "uses_pkgdown", "Uses pkgdown",
+  "uses_gha", "Uses GitHub Actions",
+  "has_news", "Has NEWS.md"
+)
+```
+
+```{r}
 all_checks |>
   tibble::column_to_rownames("package") |>
   t() |>
   as.data.frame() |>
   tibble::rownames_to_column("check") |>
+  left_join(check_descriptions) |>
+  select(-check) |> 
   mutate(
-    passed = rowSums(pick(-check), na.rm = TRUE) / n_pkgs * 100,
+    passed = rowSums(pick(-description), na.rm = TRUE) / n_pkgs * 100,
     .keep = "unused"
   ) |>
   arrange(desc(passed)) |> 
