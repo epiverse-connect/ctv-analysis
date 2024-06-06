@@ -4,10 +4,14 @@ author:
   - "James Baker"
   - "Chathura Edirisuriya"
   - "Hugo Gruson"
+logo: images/logo_white.svg
 date: last-modified
 format: 
   dashboard:
     orientation: columns
+theme: 
+  - cosmo
+  - custom.scss
 params:
   ctv: "Epidemiology"
 ---
