@@ -44,9 +44,23 @@ theme_set(theme_minimal())
 ```{r}
 ctv_pkgs <- ctv::read.ctv(tf) %>%
   purrr::pluck("packagelist", "name") 
+```
 
-ctv_pkg_descriptions <- ctv_pkgs %>%
-  pkgsearch::cran_packages()
+```{r, cache = TRUE}
+pkg_versions <- ctv_pkgs |> 
+  purrr::map(pkgsearch::cran_package_history) |> 
+  dplyr::bind_rows() |> 
+  dplyr::mutate(
+    date = lubridate::ymd_hms(date),
+    maintainer = trimws(stringr::str_extract(Maintainer, "^[^<]+"))
+  )
+```
+
+```{r}
+ctv_pkg_descriptions <- pkg_versions |> 
+  group_by(Package) |> 
+  filter(date == max(date)) |> 
+  ungroup()
 ```
 
 ## Best practices {width=33%}
@@ -150,16 +164,6 @@ all_checks |>
 ```
 
 ## Authorship trends and sustainability {width=33%}
-
-```{r}
-pkg_versions <- ctv_pkgs |> 
-  purrr::map(pkgsearch::cran_package_history) |> 
-  dplyr::bind_rows() |> 
-  dplyr::mutate(
-    date = lubridate::ymd_hms(date),
-    maintainer = trimws(stringr::str_extract(Maintainer, "^[^<]+"))
-  )
-```
 
 ```{r}
 maintainers <- pkg_versions |> 
