@@ -280,7 +280,24 @@ pkg_versions |>
 ## Dependencies and popularity {width=33%}
 
 ```{r}
-plot(cars)
+pkg_versions |> 
+  mutate(
+    count_soft = map_int(dependencies, ~ sum(.x$type == "Suggests")),
+    count_hard = map_int(dependencies, ~ n_distinct(.x$package[.x$type %in% c("Depends", "Imports", "LinkingTo")]))
+  ) |> 
+  tidyr::pivot_longer(
+    cols = c(count_soft, count_hard),
+    names_to = "type",
+    values_to = "count"
+  ) |>
+  ggplot(aes(x = date, y = count, color = type)) +
+    geom_point(alpha = 0.25) +
+    geom_smooth() +
+    labs(
+      title = "Number of hard and soft dependencies over time",
+      x = "Date",
+      y = "Number of dependencies"
+    ) +
+    theme(legend.position = "bottom") +
+    scale_color_brewer(palette = "Set2")
 ```
-
-
