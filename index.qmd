@@ -1,5 +1,5 @@
 ---
-title: "`r params$ctv` Task View analysis"
+title: "`r yaml::read_yaml('settings.yml')$view` Task View analysis"
 author: "James Baker, Chathura Edirisuriya, Hugo Gruson"
 logo: images/logo_white.svg
 date: last-modified
@@ -25,7 +25,7 @@ download.file(
     "https://github.com/cran-task-views/",
     yaml::read_yaml("settings.yml")$view,
     "/raw/main/",
-    params$ctv,
+    yaml::read_yaml("settings.yml")$view,
     ".md"
   ),
   tf
