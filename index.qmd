@@ -63,9 +63,31 @@ ctv_pkg_descriptions <- pkg_versions |>
   ungroup()
 ```
 
+```{r}
+authors <- pkg_versions |> 
+  dplyr::transmute(
+    Author = gsub("<U+000a>", " ", Author, fixed = TRUE),
+    Author = gsub(" and ", ", ", Author, fixed = TRUE),
+    Author = gsub("\\bwith contributions (of|from|by)\\b", ", ", Author),
+    parsed_authors_r = purrr::map(`Authors@R`, ~ tryCatch(format(eval(parse(text = .x)), include = c("given", "family")), error = function(e) NA)),
+    parsed_authors = strsplit(gsub("<[^>]*>", "", gsub("\\([^)]*\\)", "", gsub("\\[(\\w| |,)*\\]", "", Author))), "[[:space:]]*,+[[:space:]]*,*"),
+    date = date
+  ) |> 
+  dplyr::transmute(
+    auts = coalesce(parsed_authors, parsed_authors_r),
+    auts = map(auts, stringi::stri_trans_general, "ASCII"),
+    auts = map(auts, stringr::str_remove_all, "[[:punct:]]"),
+    auts = map(auts, trimws),
+    date = date
+  ) |> 
+  tidyr::unnest_longer(auts)
+```
+
 ## Best practices {width=33%}
 
 ### Row {height=20%}
+
+#### Col
 
 ```{r}
 #| content: valuebox
@@ -73,6 +95,17 @@ ctv_pkg_descriptions <- pkg_versions |>
 list(
   color = "#10BED2",
   value = nrow(ctv_pkg_descriptions)
+)
+```
+
+#### Col
+
+```{r}
+#| content: valuebox
+#| title: "Package authors"
+list(
+  color = "#AEC800",
+  value = n_distinct(authors$auts)
 )
 ```
 
@@ -166,34 +199,19 @@ all_checks |>
 ## Authorship trends and sustainability {width=33%}
 
 ```{r}
-maintainers <- pkg_versions |> 
+maintainers_by_year <- pkg_versions |> 
   group_by(name = maintainer) |> 
   summarise(
     maintainer_since = lubridate::year(min(date))
   )
 
-authors <- pkg_versions |> 
-  dplyr::mutate(
-    Author = gsub("<U+000a>", " ", Author, fixed = TRUE),
-    Author = gsub(" and ", ", ", Author, fixed = TRUE),
-    Author = gsub("\\bwith contributions (of|from|by)\\b", ", ", Author, fixed = TRUE),
-    parsed_authors_r = purrr::map(`Authors@R`, ~ tryCatch(format(eval(parse(text = .x)), include = c("given", "family")), error = function(e) NA)),
-    parsed_authors = strsplit(gsub("<[^>]*>", "", gsub("\\([^)]*\\)", "", gsub("\\[(\\w| |,)*\\]", "", Author))), "[[:space:]]*,+[[:space:]]*"),
-    auts = coalesce(parsed_authors, parsed_authors_r)
-  ) |> 
-  tidyr::unnest(cols = auts) |> 
-  dplyr::mutate(
-    auts = stringr::str_trim(auts),
-    auts = stringi::stri_trans_general(auts, "ASCII"),
-    auts = stringr::str_remove_all(auts, "[[:punct:]]")
-#    auts = purrr::map_chr(auts, possibly(~ paste(as.person(.x)$given[1], as.person(.x)$family), otherwise = ""))
-  ) |>
+authors_by_year <- authors |>
   group_by(name = auts) |> 
   summarise(
     author_since = lubridate::year(min(date))
   )
 
-full_join(maintainers, authors, by = "name") |>
+full_join(maintainers_by_year, authors_by_year, by = "name") |>
   tidyr::pivot_longer(
     cols = c(maintainer_since, author_since),
     names_to = "role",
