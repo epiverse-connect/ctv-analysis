@@ -64,6 +64,10 @@ ctv_pkg_descriptions <- pkg_versions |>
 ```
 
 ```{r}
+gh_repos <- read.csv("https://raw.githubusercontent.com/cran-task-views/Epidemiology/main/data/source_repositories.csv")
+```
+
+```{r}
 authors <- pkg_versions |> 
   dplyr::transmute(
     Author = gsub("<U+000a>", " ", Author, fixed = TRUE),
@@ -97,7 +101,7 @@ authors <- pkg_versions |>
 
 ```{r}
 #| content: valuebox
-#| title: "Packages"
+#| title: "Number of packages"
 list(
   color = "#10BED2",
   value = nrow(ctv_pkg_descriptions)
@@ -117,21 +121,40 @@ list(
 
 ### Row {height=20%}
 
-```{r}
-#| content: valuebox
-#| title: "GitHub Stars"
-list(
-  color = "#106BA0",
-  value = n_distinct(authors$auts)
-)
+```{r github_stars, cache = TRUE}
+stars <- gh_repos |> 
+  na.omit() |> 
+  dplyr::mutate(
+    stars = purrr::map_int(github_repo, ~ length(gh::gh("/repos/{repo}/stargazers", repo = .x)))
+  )
 ```
 
 ```{r}
 #| content: valuebox
-#| title: "Downloads"
+#| title: "GitHub Stars"
+list(
+  color = "#EBE6E0",
+  value = scales::label_number()(sum(stars$stars))
+)
+```
+
+```{r cran-downloads, cache = TRUE}
+ctv_pkgs_string <- glue::glue_collapse(ctv_pkgs, sep = ",")
+yesterday <- Sys.Date() - 1
+
+ctv_cran_stats <- "https://cranlogs.r-pkg.org/downloads/daily/2012-05-13:{yesterday}/{ctv_pkgs_string}" |> 
+  glue::glue() |> 
+  jsonlite::fromJSON() |> 
+  dplyr::select(-start, -end) |> 
+  tidyr::unnest(downloads)
+```
+
+```{r}
+#| content: valuebox
+#| title: "CRAN downloads"
 list(
   color = "#DEFF00",
-  value = n_distinct(authors$auts)
+  value = scales::label_number(scale_cut = scales::cut_short_scale())(sum(ctv_cran_stats$downloads))
 )
 ```
 
@@ -182,7 +205,7 @@ source("_scripts/gh.R")
 ```
 
 ```{r gh-checks, cache = TRUE}
-gh_checks <- read.csv("https://raw.githubusercontent.com/cran-task-views/Epidemiology/main/data/source_repositories.csv") %>%
+gh_checks <- gh_repos %>%
   transmute(
     package        = package,
     has_rmd_readme = purrr::map_lgl(github_repo, ~ gh_file_exists("README.Rmd", .x)),
