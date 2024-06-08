@@ -173,8 +173,10 @@ pkg_versions |>
     names_to = "Dependency type",
     values_to = "count"
   ) |>
-  ggplot(aes(x = date, y = count, color = `Dependency type`)) +
-    geom_point(alpha = 0.25) +
+  ggplot(aes(x = date, y = count, color = `Dependency type`, fill = `Dependency type`)) +
+    geom_point() +
+    geom_hline(yintercept = 20, linetype = "dashed", color = "#F04A4C") +
+    annotate("text", x = as.POSIXct("2006-06-01"), y = 23, label = "Maximum number of hard dependencies for CRAN", hjust = 0.5, vjust = 1, color = "#F04A4C") +
     geom_smooth() +
     labs(
       title = "Number of hard and soft dependencies over time",
@@ -182,7 +184,8 @@ pkg_versions |>
       y = "Number of dependencies"
     ) +
     theme(legend.position = "bottom") +
-    scale_color_manual(values = c(Soft = "#10BED2", Hard = "#AEC800"))
+    scale_colour_manual(values = c(Soft = "#10BED2", Hard = "#AEC800"), guide = "none") +
+    scale_fill_manual(values = c(Soft = "#10BED2", Hard = "#AEC800"))
 ```
 
 ## Best practices {width=33%}
