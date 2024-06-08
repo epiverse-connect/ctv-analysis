@@ -89,9 +89,9 @@ authors <- pkg_versions |>
   tidyr::unnest_longer(auts)
 ```
 
-## Best practices {width=33%}
+## Dependencies and popularity {width=33%}
 
-### Row {height=10%}
+### Row {height=20%}
 
 #### Col
 
@@ -115,7 +115,52 @@ list(
 )
 ```
 
+### Row {height=20%}
+
+```{r}
+#| content: valuebox
+#| title: "GitHub Stars"
+list(
+  color = "#106BA0",
+  value = n_distinct(authors$auts)
+)
+```
+
+```{r}
+#| content: valuebox
+#| title: "Downloads"
+list(
+  color = "#DEFF00",
+  value = n_distinct(authors$auts)
+)
+```
+
 ### Row
+
+```{r}
+pkg_versions |> 
+  mutate(
+    count_soft = map_int(dependencies, ~ sum(.x$type == "Suggests")),
+    count_hard = map_int(dependencies, ~ n_distinct(.x$package[.x$type %in% c("Depends", "Imports", "LinkingTo")]))
+  ) |> 
+  tidyr::pivot_longer(
+    cols = c(count_soft, count_hard),
+    names_to = "type",
+    values_to = "count"
+  ) |>
+  ggplot(aes(x = date, y = count, color = type)) +
+    geom_point(alpha = 0.25) +
+    geom_smooth() +
+    labs(
+      title = "Number of hard and soft dependencies over time",
+      x = "Date",
+      y = "Number of dependencies"
+    ) +
+    theme(legend.position = "bottom") +
+    scale_color_brewer(palette = "Set2")
+```
+
+## Best practices {width=33%}
 
 ```{r}
 desc_checks <- ctv_pkg_descriptions %>%
@@ -214,8 +259,7 @@ all_checks |>
     subtitle = gt::md("Good practices as defined by [rOpenSci dev guide](https://devguide.ropensci.org/index.html), and [Epiverse-TRACE blueprints](https://epiverse-trace.github.io/blueprints/).")
   ) |> 
   gt::tab_options(
-    column_labels.hidden = TRUE,
-    table.font.size = "80%"
+    column_labels.hidden = TRUE
   )
 ```
 
@@ -299,29 +343,3 @@ pkg_versions |>
     theme(legend.position = "bottom") +
     scale_fill_brewer(palette = "Set1")
 ```
-
-## Dependencies and popularity {width=33%}
-
-```{r}
-pkg_versions |> 
-  mutate(
-    count_soft = map_int(dependencies, ~ sum(.x$type == "Suggests")),
-    count_hard = map_int(dependencies, ~ n_distinct(.x$package[.x$type %in% c("Depends", "Imports", "LinkingTo")]))
-  ) |> 
-  tidyr::pivot_longer(
-    cols = c(count_soft, count_hard),
-    names_to = "type",
-    values_to = "count"
-  ) |>
-  ggplot(aes(x = date, y = count, color = type)) +
-    geom_point(alpha = 0.25) +
-    geom_smooth() +
-    labs(
-      title = "Number of hard and soft dependencies over time",
-      x = "Date",
-      y = "Number of dependencies"
-    ) +
-    theme(legend.position = "bottom") +
-    scale_color_brewer(palette = "Set2")
-```
-
