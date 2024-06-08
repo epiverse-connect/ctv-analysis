@@ -84,7 +84,10 @@ authors <- pkg_versions |>
   dplyr::mutate(
     auts = coalesce(parsed_authors, parsed_authors_r),
     auts = map(auts, stringi::stri_trans_general, "ASCII"),
-    auts = map(auts, stringr::str_remove_all, "[[:punct:]]"),
+    auts = map(auts, stringr::str_replace_all, "[[:punct:]]", " "),
+    auts = map(auts, stringr::str_replace_all, "[[:space:]]+", " "),
+    auts = map(auts, stringr::str_replace_all, " \\w ", " "), # remove middle names
+    auts = map(auts, stringr::str_remove_all, "et al"),
     auts = map(auts, trimws),
     maintainer = stringi::stri_trans_general(maintainer, "ASCII"),
     maintainer = stringr::str_remove_all(maintainer, "[[:punct:]]"),
@@ -92,7 +95,34 @@ authors <- pkg_versions |>
     .keep = "unused"
   ) |> 
   select(-Author) |> 
-  tidyr::unnest_longer(auts)
+  tidyr::unnest_longer(auts) |> 
+  dplyr::mutate(auts = case_when(
+    auts %in% c("Jose Lozano", "Lozano Jose E") ~ "Jose Lozano Alonso",
+    auts == "K Seppa" ~ "Karri Seppa",
+    auts == "Kevis Weiss" ~ "Kevin Weiss",
+    auts == "Michael Fay User" ~ "Michael Fay",
+    auts == "Rich FitzJohn" ~ "Rich Fitzjohn",
+    auts == "Tomas Aragon Developer" ~ "Tomas Aragon",
+    auts == "Carles Breto" ~ "Carles Martinez Breto",
+    auts == "Isaac Fung" ~ "Isaac Chun Hai Fung",
+    auts == "V Wimmer" ~ "Valentin Wimmer",
+    auts == "T Correa" ~ "Thais Correa",
+    auts == "S Meyer" ~ "Sebastian Meyer",
+    auts == "M Salmon" ~ "Maelle Salmon",
+    auts == "M Rantanen" ~ "Matti Rantanen",
+    auts == "Ahmad family = Rabiee" ~ "Ahmad Rabiee",
+    auts == "D Sabanes Bove" ~ "Daniel Sabanes Bove",
+    auts == "Daniel Wollschlaeger User" ~ "Daniel Wollschlaeger",
+    auts == "Eamon O Dea" ~ "Eamon Dea",
+    auts == "Ed Ionides" ~ "Edward Ionides",
+    auts == "J Miettinen" ~ "Joonas Miettinen",
+    auts == "L Held" ~ "Leonhard Held",
+    TRUE ~ auts
+  )) |> 
+  dplyr::mutate(
+    switched = format(format(as.person(auts), c("family", "given"))),
+    duplicated = switched %in% .data$auts
+  )
 ```
 
 ## Dependencies and popularity {width=33%}
