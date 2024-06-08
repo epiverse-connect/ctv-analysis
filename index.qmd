@@ -165,15 +165,15 @@ list(
 ```{r}
 pkg_versions |> 
   mutate(
-    count_soft = map_int(dependencies, ~ sum(.x$type == "Suggests")),
-    count_hard = map_int(dependencies, ~ n_distinct(.x$package[.x$type %in% c("Depends", "Imports", "LinkingTo")]))
+    Soft = map_int(dependencies, ~ sum(.x$type == "Suggests")),
+    Hard = map_int(dependencies, ~ n_distinct(.x$package[.x$type %in% c("Depends", "Imports", "LinkingTo")]))
   ) |> 
   tidyr::pivot_longer(
-    cols = c(count_soft, count_hard),
-    names_to = "type",
+    cols = c(Soft, Hard),
+    names_to = "Dependency type",
     values_to = "count"
   ) |>
-  ggplot(aes(x = date, y = count, color = type)) +
+  ggplot(aes(x = date, y = count, color = `Dependency type`)) +
     geom_point(alpha = 0.25) +
     geom_smooth() +
     labs(
@@ -182,7 +182,7 @@ pkg_versions |>
       y = "Number of dependencies"
     ) +
     theme(legend.position = "bottom") +
-    scale_color_brewer(palette = "Set2")
+    scale_color_manual(values = c(Soft = "#10BED2", Hard = "#AEC800"))
 ```
 
 ## Best practices {width=33%}
@@ -322,7 +322,7 @@ full_join(maintainers_by_year, authors_by_year, by = "name") |>
       fill = ""
     ) +
     theme(legend.position = "bottom") +
-    scale_fill_brewer(palette = "Set2")
+    scale_fill_manual(values = c("Maintainer" = "#AEC800", "Author" = "#106BA0"))
 ```
 
 ```{r}
