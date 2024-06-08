@@ -71,15 +71,21 @@ authors <- pkg_versions |>
     Author = gsub("\\bwith contributions (of|from|by)\\b", ", ", Author),
     parsed_authors_r = purrr::map(`Authors@R`, ~ tryCatch(format(eval(parse(text = .x)), include = c("given", "family")), error = function(e) NA)),
     parsed_authors = strsplit(gsub("<[^>]*>", "", gsub("\\([^)]*\\)", "", gsub("\\[(\\w| |,)*\\]", "", Author))), "[[:space:]]*,+[[:space:]]*,*"),
-    date = date
+    date = date,
+    package = Package,
+    maintainer = maintainer
   ) |> 
-  dplyr::transmute(
+  dplyr::mutate(
     auts = coalesce(parsed_authors, parsed_authors_r),
     auts = map(auts, stringi::stri_trans_general, "ASCII"),
     auts = map(auts, stringr::str_remove_all, "[[:punct:]]"),
     auts = map(auts, trimws),
-    date = date
+    maintainer = stringi::stri_trans_general(maintainer, "ASCII"),
+    maintainer = stringr::str_remove_all(maintainer, "[[:punct:]]"),
+    maintainer = trimws(maintainer),
+    .keep = "unused"
   ) |> 
+  select(-Author) |> 
   tidyr::unnest_longer(auts)
 ```
 
@@ -317,4 +323,25 @@ pkg_versions |>
     ) +
     theme(legend.position = "bottom") +
     scale_color_brewer(palette = "Set2")
+```
+
+```{r}
+authors |> 
+  group_by(package) |> 
+  filter(
+    date == max(date),
+    maintainer != auts
+  ) |> 
+  tidyr::pivot_longer(
+    cols = c(auts, maintainer),
+    names_to = "role",
+    values_to = "name"
+  ) |> 
+  distinct() |> 
+  ggplot(aes(package, name, fill = role)) +
+    geom_tile() +
+    theme(
+      axis.text = element_blank(),
+      axis.ticks = element_blank()
+    )
 ```
