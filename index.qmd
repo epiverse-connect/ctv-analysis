@@ -320,7 +320,7 @@ full_join(maintainers_by_year, authors_by_year, by = "name") |>
     geom_histogram(binwidth = 1) +
     labs(
       title = "Recruitement of new authors & maintainers",
-      x = "Year",
+      x = "Date",
       y = "Number of new authors/maintainers",
       fill = ""
     ) +
@@ -366,7 +366,7 @@ pkg_versions |>
     geom_col() +
     labs(
       title = "New releases, updates and archivals",
-      x = "Year", y = "Number of events",
+      x = "Date", y = "Number of events",
       fill = ""
     ) +
     theme(legend.position = "bottom") +
