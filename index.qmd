@@ -85,13 +85,13 @@ authors <- pkg_versions |>
 
 ## Best practices {width=33%}
 
-### Row {height=20%}
+### Row {height=10%}
 
 #### Col
 
 ```{r}
 #| content: valuebox
-#| title: "Number of packages"
+#| title: "Packages"
 list(
   color = "#10BED2",
   value = nrow(ctv_pkg_descriptions)
@@ -130,7 +130,7 @@ library(httr)
 source("_scripts/gh.R")
 ```
 
-```{r, cache = TRUE}
+```{r gh-checks, cache = TRUE}
 gh_checks <- read.csv("https://raw.githubusercontent.com/cran-task-views/Epidemiology/main/data/source_repositories.csv") %>%
   transmute(
     package        = package,
@@ -154,19 +154,19 @@ n_pkgs <- nrow(all_checks)
 
 ```{r}
 check_descriptions <- tribble(
-  ~check, ~description,
-  "has_github_url", "Has a GitHub URL",
-  "uses_roxygen", "Uses Roxygen",
-  "has_knitr_vignette", "Has a knitr vignette",
-  "uses_testing", "Uses testing package",
-  "has_no_deprecated", "Does not depend on deprecated packages (XML, RCurl, RUnit, plyr, reshape2)",
-  "uses_authors_r", "Has Authors@R field",
-  "uses_orcid", "Has ORCID in Author field",
-  "has_rmd_readme", "Has README.Rmd",
-  "has_md_license", "Has LICENSE.md",
-  "uses_pkgdown", "Uses pkgdown",
-  "uses_gha", "Uses GitHub Actions",
-  "has_news", "Has NEWS.md"
+  ~check, ~description, ~details, ~category,
+  "has_github_url", "Has a GitHub URL", "In `BugReports` or `URL` fields in `DESCRIPTION`", "Metadata",
+  "uses_roxygen", "Uses Roxygen", "As indicated by the presence of the `RoxygenNote` field in `DESCRIPTION`", "Documentation",
+  "has_knitr_vignette", "Has a knitr vignette", "", "Documentation",
+  "uses_testing", "Uses testing package", "", "Testing & CI",
+  "has_no_deprecated", "Does not depend on deprecated packages", "XML, RCurl, RUnit, plyr, or reshape2 packages", "Sustainability",
+  "uses_authors_r", "Has Authors@R field", "", "Metadata",
+  "uses_orcid", "Has ORCID in Author field", "", "Metadata",
+  "has_rmd_readme", "Has README.Rmd", "", "Documentation",
+  "has_md_license", "Has LICENSE.md", "", "Metadata",
+  "uses_pkgdown", "Uses pkgdown", "", "Documentation",
+  "uses_gha", "Uses GitHub Actions", "", "Testing & CI",
+  "has_news", "Has NEWS.md", "", "Documentation"
 )
 ```
 
@@ -179,11 +179,16 @@ all_checks |>
   left_join(check_descriptions) |>
   select(-check) |> 
   mutate(
-    passed = rowSums(pick(-description), na.rm = TRUE) / n_pkgs * 100,
+    passed = rowSums(pick(!c(description, details, category)), na.rm = TRUE) / n_pkgs * 100,
     .keep = "unused"
   ) |>
   arrange(desc(passed)) |> 
-  gt::gt() |> 
+  gt::gt(groupname_col = "category", rowname_col = "description") |> 
+  gt::cols_merge(
+    columns = c(description, details),
+    pattern = "{1}<br><small><i>{2}</i></small>"
+  ) |> 
+  gt::cols_width(passed ~ gt::px(100)) |> 
   gt::fmt_number(
     columns = passed,
     decimals = 0,
@@ -193,6 +198,18 @@ all_checks |>
     method = "numeric",
     palette = "viridis",
     domain = c(0, 100)
+  ) |> 
+  gt::tab_stub_indent(
+    rows = gt::everything(),
+    indent = 5
+  ) |> 
+  gt::tab_header(
+    title = gt::md("Adherence to good practices"),
+    subtitle = gt::md("Good practices as defined by [rOpenSci dev guide](https://devguide.ropensci.org/index.html), and [Epiverse-TRACE blueprints](https://epiverse-trace.github.io/blueprints/).")
+  ) |> 
+  gt::tab_options(
+    column_labels.hidden = TRUE,
+    table.font.size = "80%"
   )
 ```
 
