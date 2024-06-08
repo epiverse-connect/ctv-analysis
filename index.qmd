@@ -38,7 +38,9 @@ library(pkgsearch)
 library(dplyr)
 library(purrr)
 library(ggplot2)
-theme_set(theme_minimal())
+theme_set(
+  theme_minimal(base_size = 18)
+)
 ```
 
 ```{r}
@@ -313,7 +315,7 @@ full_join(maintainers_by_year, authors_by_year, by = "name") |>
   ggplot(aes(x = year, fill = role)) +
     geom_histogram(binwidth = 1) +
     labs(
-      title = "Recruitement of new authors & maintainers in the ecosystem",
+      title = "Recruitement of new authors & maintainers",
       x = "Year",
       y = "Number of new authors/maintainers",
       fill = ""
@@ -356,11 +358,11 @@ pkg_versions |>
     names_to = "release_type",
     values_to = "yearly_releases"
   ) |>
-  ggplot(aes(x = factor(year), y = yearly_releases, fill = release_type)) +
+  ggplot(aes(x = year, y = yearly_releases, fill = release_type)) +
     geom_col() +
     labs(
-      title = "New releases or package updates",
-      x = "Year", y = "Number of releases",
+      title = "New releases, updates and archivals",
+      x = "Year", y = "Number of events",
       fill = ""
     ) +
     theme(legend.position = "bottom") +
