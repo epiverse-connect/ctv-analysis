@@ -326,6 +326,28 @@ pkg_versions |>
 ```
 
 ```{r}
+ctv_pkgs_string <- glue::glue_collapse(ctv_pkgs, sep = ",")
+yesterday <- Sys.Date() - 1
+```
+
+```{r cran-downloads, cache = TRUE}
+ctv_cran_stats <- "https://cranlogs.r-pkg.org/downloads/daily/2012-05-13:{yesterday}/{ctv_pkgs_string}" |> 
+  glue::glue() |> 
+  jsonlite::fromJSON() |> 
+  dplyr::select(-start, -end) |> 
+  tidyr::unnest(downloads)
+```
+
+
+```{r}
+downloads <- ctv_cran_stats |> 
+  dplyr::group_by(package) |> 
+  dplyr::summarise(
+    downloads = sum(downloads)
+  )
+```
+
+```{r}
 authors |> 
   group_by(package) |> 
   filter(
@@ -338,6 +360,11 @@ authors |>
     values_to = "name"
   ) |> 
   distinct() |> 
+  left_join(downloads) |> 
+  mutate(
+    package = as.factor(package),
+    package = forcats::fct_reorder(package, downloads)
+  ) |> 
   ggplot(aes(package, name, fill = role)) +
     geom_tile() +
     theme(
