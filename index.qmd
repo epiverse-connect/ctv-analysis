@@ -247,7 +247,9 @@ gh_checks <- gh_repos %>%
     has_md_license = purrr::map_lgl(github_repo, ~ gh_file_exists("LICENSE.md", .x)),
     uses_pkgdown    = purrr::map_lgl(github_repo, ~ any(gh_file_list_exists(c("_pkgdown.yml", "_pkgdown.yaml", "pkgdown/pkgdown.yml"), .x))),
     uses_gha        = purrr::map_lgl(github_repo, ~ gh_file_exists(".github/workflows", .x)),
-    has_news       = purrr::map_lgl(github_repo, ~ gh_file_exists("NEWS.md", .x))
+    has_news       = purrr::map_lgl(github_repo, ~ gh_file_exists("NEWS.md", .x)),
+    has_contributing = purrr::map_lgl(github_repo, ~ any(gh_file_list_exists(c("CONTRIBUTING.md", ".github/CONTRIBUTING.md"), .x))),
+    has_coc         = purrr::map_lgl(github_repo, ~ any(gh_file_list_exists(c("CODE_OF_CONDUCT.md", ".github/CODE_OF_CONDUCT.md"), .x)))
   )
 ```
 
@@ -275,7 +277,9 @@ check_descriptions <- tribble(
   "has_md_license", "Has LICENSE.md", "", "Metadata",
   "uses_pkgdown", "Uses pkgdown", "", "Documentation",
   "uses_gha", "Uses GitHub Actions", "", "Testing & CI",
-  "has_news", "Has NEWS.md", "", "Documentation"
+  "has_news", "Has NEWS.md", "", "Documentation",
+  "has_contributing", "Has a contributing guide", "", "Community",
+  "has_coc", "Has a code of conduct", "", "Community"
 )
 ```
 
@@ -318,7 +322,8 @@ all_checks |>
   ) |> 
   gt::tab_options(
     column_labels.hidden = TRUE,
-    row_group.font.weight = "bold"
+    row_group.font.weight = "bold",
+    table.font.size = "80%"
   )
 ```
 
