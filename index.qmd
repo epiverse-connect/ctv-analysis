@@ -1,6 +1,5 @@
 ---
 title: "`r yaml::read_yaml('settings.yml')$view` Task View analysis"
-author: "James Baker, Chathura Edirisuriya, Hugo Gruson"
 logo: images/logo_white.svg
 date: last-modified
 format: 
@@ -17,6 +16,8 @@ knitr::opts_chunk$set(
   echo = FALSE
 )
 ```
+
+# Analysis
 
 ```{r}
 tf <- tempfile(fileext = ".md")
@@ -422,3 +423,5 @@ pkg_versions |>
     theme(legend.position = "bottom") +
     scale_fill_brewer(palette = "Set1")
 ```
+
+# About
