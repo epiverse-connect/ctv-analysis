@@ -167,7 +167,7 @@ stars <- gh_repos |>
 #| title: "GitHub stars"
 list(
   color = "#EBE6E0",
-  value = scales::label_number()(sum(stars$stars))
+  value = scales::label_number(big.mark = ",")(sum(stars$stars))
 )
 ```
 
