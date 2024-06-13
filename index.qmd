@@ -370,7 +370,7 @@ full_join(maintainers_by_year, authors_by_year, by = "name") |>
   ggplot(aes(x = year, fill = role)) +
     geom_histogram(binwidth = 1) +
     labs(
-      title = "Recruitement of new authors & maintainers",
+      title = "Recruitment of new authors & maintainers",
       x = "Date",
       y = "Number of new authors/maintainers",
       fill = ""
