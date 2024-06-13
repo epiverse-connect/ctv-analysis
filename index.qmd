@@ -191,7 +191,7 @@ list(
 )
 ```
 
-### Row
+### Row {.flow}
 
 ```{r}
 pkg_versions |> 
@@ -343,7 +343,9 @@ all_checks |>
   )
 ```
 
-## Authorship trends and sustainability {width=33%}
+## Authorship trends and sustainability {width=33%} 
+
+### Row {.flow}
 
 ```{r}
 maintainers_by_year <- pkg_versions |> 
@@ -378,6 +380,8 @@ full_join(maintainers_by_year, authors_by_year, by = "name") |>
     theme(legend.position = "bottom") +
     scale_fill_manual(values = c("Maintainer" = "#AEC800", "Author" = "#106BA0"))
 ```
+
+### Row  {.flow}
 
 ```{r}
 source("_scripts/parse_archive.R")
