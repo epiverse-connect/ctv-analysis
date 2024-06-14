@@ -191,10 +191,10 @@ list(
 )
 ```
 
-### Row {.flow}
+### Row {.flow} {.tabset}
 
 ```{r}
-pkg_versions |> 
+dep_count <- pkg_versions |> 
   mutate(
     Soft = map_int(dependencies, ~ sum(.x$type == "Suggests")),
     Hard = map_int(dependencies, ~ n_distinct(.x$package[.x$type %in% c("Depends", "Imports", "LinkingTo")]))
@@ -203,9 +203,31 @@ pkg_versions |>
     cols = c(Soft, Hard),
     names_to = "Dependency type",
     values_to = "count"
-  ) |>
+  )
+```
+
+```{r}
+#| title: Data points
+dep_count |>
   ggplot(aes(x = date, y = count, color = `Dependency type`, fill = `Dependency type`)) +
     geom_point() +
+    geom_hline(yintercept = 20, linetype = "dashed", color = "#F04A4C") +
+    annotate("text", x = as.POSIXct("2006-06-01"), y = 23, label = "Maximum number of hard dependencies for CRAN", hjust = 0.5, vjust = 1, color = "#F04A4C") +
+    labs(
+      title = "Number of hard and soft dependencies over time",
+      x = "Date",
+      y = "Number of dependencies"
+    ) +
+    theme(legend.position = "bottom") +
+    scale_colour_manual(values = c(Soft = "#10BED2", Hard = "#AEC800")) +
+    lims(y = c(0, max(dep_count$count) + 2))
+```
+
+```{r}
+#| title: Trend line
+dep_count |>
+  ggplot(aes(x = date, y = count, color = `Dependency type`, fill = `Dependency type`)) +
+    geom_point(alpha = 0.07) +
     geom_hline(yintercept = 20, linetype = "dashed", color = "#F04A4C") +
     annotate("text", x = as.POSIXct("2006-06-01"), y = 23, label = "Maximum number of hard dependencies for CRAN", hjust = 0.5, vjust = 1, color = "#F04A4C") +
     geom_smooth() +
@@ -216,8 +238,10 @@ pkg_versions |>
     ) +
     theme(legend.position = "bottom") +
     scale_colour_manual(values = c(Soft = "#10BED2", Hard = "#AEC800"), guide = "none") +
-    scale_fill_manual(values = c(Soft = "#10BED2", Hard = "#AEC800"))
+    scale_fill_manual(values = c(Soft = "#10BED2", Hard = "#AEC800")) +
+    lims(y = c(0, max(dep_count$count) + 2))
 ```
+
 
 ## Best practices {width=33%}
 
