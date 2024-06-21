@@ -145,7 +145,7 @@ authors <- pkg_versions |>
 
 ```{r}
 #| content: valuebox
-#| title: "Number of packages"
+#| title: "Packages"
 list(
   color = "#10BED2",
   value = nrow(ctv_pkg_descriptions)
