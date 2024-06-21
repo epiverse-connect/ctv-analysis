@@ -39,6 +39,17 @@ library(pkgsearch)
 library(dplyr)
 library(purrr)
 library(ggplot2)
+library(yaml)
+library(tidyr)
+library(lubridate)
+library(askpass)
+library(stringr)
+library(stringi)
+library(glue)
+library(jsonlite)
+library(scales)
+library(gt)
+library(report)
 theme_set(
   theme_minimal(base_size = 18)
 )
@@ -453,3 +464,39 @@ pkg_versions |>
 ```
 
 # About
+
+::: {.card title="References"}
+
+```{r, results='asis'}
+summary(report::report(sessionInfo()))
+```
+
+<details><summary>Citations</summary>
+
+```{r, results='asis'}
+report::cite_packages()
+```
+
+</details>
+
+#### Related work
+
+- [Lluís Revilla Sancho's blog posts about the CRAN ecosystem](https://llrs.dev/categories/cran/)
+- ["Six degrees of Hadley Wickham: The CRAN co-authorship network", by David Schoch](https://blog.schochastics.net/posts/2024-01-17_six-degrees-of-hadley-wickham/)
+- ["Historical Trends in R Package Structure and Interdependency on CRAN", by Mark Padgham and Noam Ross](https://mpadge.github.io/pkgstats-analyses/articles/pkgstats.html)
+
+:::
+
+::: {.card title="Authors and acknowledgements"}
+
+
+This analysis was initially started by Hugo Gruson, before being picked up in an Epiverse hackathon at the WHO Collaboratory in Berlin in September 2023 by James Baker, Chathura Edirisuriya and Hugo Gruson. The final dashboard creation and automation was done by Hugo Gruson.
+
+Additional contributions and reviews were provided by Chris Hartgerink.
+
+#### Funding
+
+Hugo Gruson was funded for this work by the Wellcome Trust 224140/Z/21/Z. 
+
+:::
+
