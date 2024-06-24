@@ -21,14 +21,15 @@ knitr::opts_chunk$set(
 
 ```{r}
 tf <- tempfile(fileext = ".md")
+# Default branch name can change between repos so we check first
+ctv_file_address <- gh::gh(
+  "/repos/{owner}/{repo}/contents/{path}",
+  owner = "cran-task-views",
+  repo = yaml::read_yaml("settings.yml")$view,
+  path = paste0(yaml::read_yaml("settings.yml")$view, ".md")
+)
 download.file(
-  paste0(
-    "https://github.com/cran-task-views/",
-    yaml::read_yaml("settings.yml")$view,
-    "/raw/main/",
-    yaml::read_yaml("settings.yml")$view,
-    ".md"
-  ),
+  ctv_file_address$download_url,
   tf
 )
 ```
@@ -77,8 +78,19 @@ ctv_pkg_descriptions <- pkg_versions |>
   ungroup()
 ```
 
-```{r}
+```{r eval=identical(yaml::read_yaml('settings.yml')$view, "Epidemiology")}
 gh_repos <- read.csv("https://raw.githubusercontent.com/cran-task-views/Epidemiology/main/data/source_repositories.csv")
+```
+
+```{r eval=!identical(yaml::read_yaml('settings.yml')$view, "Epidemiology")}
+gh_repos <- ctv_pkg_descriptions |> 
+  transmute(
+    package = Package,
+    github_repo = dplyr::coalesce(
+      stringr::str_match(URL, "https://github.com/([^/]+/[^/, ]+)")[, 2],
+      stringr::str_match(BugReports, "https://github.com/([^/]+/[^/, ]+)/issues")[, 2]
+    )
+  )
 ```
 
 ```{r}
@@ -130,11 +142,7 @@ authors <- pkg_versions |>
     auts == "J Miettinen" ~ "Joonas Miettinen",
     auts == "L Held" ~ "Leonhard Held",
     TRUE ~ auts
-  )) |> 
-  dplyr::mutate(
-    switched = format(format(as.person(auts), c("family", "given"))),
-    duplicated = switched %in% .data$auts
-  )
+  ))
 ```
 
 ## Dependencies and popularity {width=33%}
