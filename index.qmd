@@ -4,6 +4,7 @@ logo: images/logo_white.svg
 date: last-modified
 format: 
   dashboard:
+    include-in-header: google-analytics.html
     orientation: columns
     nav-buttons: github
 theme: 
