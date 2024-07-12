@@ -485,6 +485,7 @@ report::cite_packages()
 - [Lluís Revilla Sancho's blog posts about the CRAN ecosystem](https://llrs.dev/categories/cran/)
 - ["Six degrees of Hadley Wickham: The CRAN co-authorship network", by David Schoch](https://blog.schochastics.net/posts/2024-01-17_six-degrees-of-hadley-wickham/)
 - ["Historical Trends in R Package Structure and Interdependency on CRAN", by Mark Padgham and Noam Ross](https://mpadge.github.io/pkgstats-analyses/articles/pkgstats.html)
+- ["More than 25 years of CRAN" keynote at useR!2024 by Kurt Hornik](https://raw.githubusercontent.com/gorinsimon/user2024-talks-files/main/attached_files/3_user2024_CRAN.pdf)
 
 :::
 
