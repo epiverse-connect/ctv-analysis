@@ -298,27 +298,13 @@ gh_checks <- gh_contents %>%
   )
 ```
 
-```{r has-doi, cache = TRUE}
-source("_scripts/has_doi.R")
-extra_checks <- ctv_pkg_descriptions |> 
-  transmute(
-    has_doi = purrr::map_lgl(Package, has_doi),
-    package = Package
-  )
-```
-
 ```{r}
 all_checks <- merge(
   gh_checks,
   desc_checks,
   all = TRUE,
   by = "package"
-) |> 
-  merge(
-    extra_checks,
-    all = TRUE,
-    by = "package"
-  )
+) 
 n_pkgs <- nrow(all_checks)
 ```
 
@@ -338,8 +324,7 @@ check_descriptions <- tribble(
   "uses_gha", "Uses GitHub Actions", "", "Testing & CI",
   "has_news", "Has NEWS.md", "", "Documentation",
   "has_contributing", "Has a contributing guide", "", "Community",
-  "has_coc", "Has a code of conduct", "", "Community",
-  "has_doi", "Provides a DOI for citation", "", "Metadata"
+  "has_coc", "Has a code of conduct", "", "Community"
 )
 ```
 
