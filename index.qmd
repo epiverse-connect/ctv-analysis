@@ -214,8 +214,12 @@ list(
 ```{r}
 dep_count <- pkg_versions |> 
   mutate(
-    Soft = map_int(dependencies, ~ sum(.x$type == "Suggests")),
-    Hard = map_int(dependencies, ~ n_distinct(.x$package[.x$type %in% c("Depends", "Imports", "LinkingTo")]))
+    nonbase_dependencies = purrr::map(
+      dependencies, 
+      ~ .x[!.x$package %in% tools:::.get_standard_package_names()$base, ]
+    ),
+    Soft = map_int(nonbase_dependencies, ~ sum(.x$type == "Suggests")),
+    Hard = map_int(nonbase_dependencies, ~ n_distinct(.x$package[.x$type %in% c("Depends", "Imports", "LinkingTo")]))
   ) |> 
   tidyr::pivot_longer(
     cols = c(Soft, Hard),
@@ -232,6 +236,7 @@ dep_plot <- dep_count |>
     annotate("text", x = as.POSIXct("2006-06-01"), y = 23, label = "Maximum number of hard dependencies for CRAN", hjust = 0.5, vjust = 1, color = "#F04A4C") +
     labs(
       title = "Number of hard and soft dependencies over time",
+      subtitle = "(excluding base packages)",
       x = "Date",
       y = "Number of dependencies"
     ) +
