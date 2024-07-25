@@ -103,7 +103,7 @@ authors <- pkg_versions |>
     Author = authoritative::remove_brackets(Author, "<"),
     Author = gsub(" and ", ", ", Author, fixed = TRUE),
     Author = gsub("\\bwith contributions (of|from|by)\\b", ", ", Author),
-    parsed_authors_r = purrr::map(`Authors@R`, ~ tryCatch(format(eval(parse(text = .x)), include = c("given", "family")), error = function(e) NA)),
+    parsed_authors_r = purrr::map(authoritative::parse_authors_r(`Authors@R`), format, include = c("given", "family")),
     parsed_authors = strsplit(Author, "[[:space:]]*,+[[:space:]]*,*"),
     date = date,
     package = Package,
