@@ -8,8 +8,9 @@ CRAN Task Views are a collection of R packages related to a specific topic.
 But are these packages reliable, updated, and in line with current community best practices?
 
 We perform a reproducible, and reusable, analysis of the Epidemiology CRAN Task View, aiming to:
-  • Evaluate the ecosystem health and resilience
-  • Identify training and support needs
+
+  - Evaluate the ecosystem health and resilience
+  - Identify training and support needs
 
 ## 📦 Re-usability
 
