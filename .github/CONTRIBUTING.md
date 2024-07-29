@@ -5,7 +5,7 @@ This project uses pre-commit to automatically screen incoming code for a minimum
 To comply:
 - [Install pre-commit on your machine](https://pre-commit.com/#install)
 - Navigate to this repo
-    - `cd cran-task-view-analysis`
+    - `cd ctv-analysis`
 - Set up pre-commit
     - `pre-commit install`
 - Make changes to the code
