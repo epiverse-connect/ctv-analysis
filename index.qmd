@@ -18,23 +18,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Analysis
-
-```{r}
-tf <- tempfile(fileext = ".md")
-# Default branch name can change between repos so we check first
-ctv_file_address <- gh::gh(
-  "/repos/{owner}/{repo}/contents/{path}",
-  owner = "cran-task-views",
-  repo = yaml::read_yaml("settings.yml")$view,
-  path = paste0(yaml::read_yaml("settings.yml")$view, ".md")
-)
-download.file(
-  ctv_file_address$download_url,
-  tf
-)
-```
-
 ```{r, message = FALSE}
 library(ctv)
 library(pkgsearch)
@@ -57,13 +40,44 @@ theme_set(
 )
 ```
 
+# Analysis
+
 ```{r}
-ctv_pkgs <- ctv::read.ctv(tf) %>%
-  purrr::pluck("packagelist", "name") 
+pkgs <- NULL
+```
+
+```{r, eval=!is.null(yaml::read_yaml('settings.yml')$view)}
+tf <- tempfile(fileext = ".md")
+# Default branch name can change between repos so we check first
+ctv_file_address <- gh::gh(
+  "/repos/{owner}/{repo}/contents/{path}",
+  owner = "cran-task-views",
+  repo = yaml::read_yaml("settings.yml")$view,
+  path = paste0(yaml::read_yaml("settings.yml")$view, ".md")
+)
+download.file(
+  ctv_file_address$download_url,
+  tf
+)
+pkgs <- ctv::read.ctv(tf) |>
+  purrr::pluck("packagelist", "name") |>
+  c(pkgs)
+```
+
+```{r, eval=!is.null(yaml::read_yaml('settings.yml')$packages)}
+pkgs <- yaml::read_yaml('settings.yml')$packages |> 
+  c(pkgs)
+```
+
+```{r}
+pkgs <- unique(pkgs)
+if (length(pkgs) == 0) {
+  knitr::knit_exit("No packages found")
+}
 ```
 
 ```{r, cache = TRUE}
-pkg_versions <- ctv_pkgs |> 
+pkg_versions <- pkgs |> 
   purrr::map(pkgsearch::cran_package_history) |> 
   dplyr::bind_rows() |> 
   dplyr::mutate(
@@ -190,10 +204,10 @@ list(
 ```
 
 ```{r cran-downloads, cache = TRUE}
-ctv_pkgs_string <- glue::glue_collapse(ctv_pkgs, sep = ",")
+pkgs_string <- glue::glue_collapse(pkgs, sep = ",")
 yesterday <- Sys.Date() - 1
 
-ctv_cran_stats <- "https://cranlogs.r-pkg.org/downloads/daily/2012-05-13:{yesterday}/{ctv_pkgs_string}" |> 
+ctv_cran_stats <- "https://cranlogs.r-pkg.org/downloads/daily/2012-05-13:{yesterday}/{pkgs_string}" |> 
   glue::glue() |> 
   jsonlite::fromJSON() |> 
   dplyr::select(-start, -end) |> 
@@ -416,7 +430,7 @@ full_join(maintainers_by_year, authors_by_year, by = "name") |>
 source("_scripts/parse_archive.R")
 
 yearly_archivals <- archive_df |> 
-  filter(package %in% ctv_pkgs) |> 
+  filter(package %in% pkgs) |> 
   dplyr::mutate(
     date = lubridate::ymd(archivals),
     year = lubridate::year(date),

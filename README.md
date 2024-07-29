@@ -18,6 +18,8 @@ This analysis is designed with re-usability in mind. It can be run on any other 
 
 To do so, edit the name of the Task View to analyse in `settings.yml`
 
+Alternatively, you can also provide a custom list of packages, whithout needing to rely on a Task View, in the `packages` field of `settings.yml`.
+
 ## For contributing
 
 This project is open to contributions. Please refer to the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information.
