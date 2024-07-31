@@ -119,13 +119,13 @@
       "RemoteUsername": "Bisaloo",
       "RemoteRepo": "authoritative",
       "RemoteRef": "main",
-      "RemoteSha": "18cc6037619df5453b857b9f9103bf5ac7024b07",
+      "RemoteSha": "2eaea1124e93c561c48d503d4237014a3e9fb69e",
       "Requirements": [
         "R",
         "stringi",
         "utils"
       ],
-      "Hash": "9bf39862764f3afb179b492ea2c5e83e"
+      "Hash": "d0bd3dfcf981950b6fe1807db03f4f39"
     },
     "backports": {
       "Package": "backports",

@@ -111,8 +111,6 @@ gh_repos <- ctv_pkg_descriptions |>
 ```{r}
 authors <- pkg_versions |> 
   dplyr::transmute(
-    # authoritative::parse_authors() should possibly be able to handle this
-    Author = gsub("<U+000a>", " ", Author, fixed = TRUE),
     parsed_authors_r = purrr::map(authoritative::parse_authors_r(`Authors@R`), format, include = c("given", "family")),
     parsed_authors = purrr::map(authoritative::parse_authors(Author), format, include = c("given", "family")),
     date = date,
@@ -133,7 +131,6 @@ authors <- pkg_versions |>
     maintainer = trimws(maintainer),
     .keep = "unused"
   ) |> 
-  select(-Author) |> 
   tidyr::unnest_longer(auts) |> 
   dplyr::mutate(auts = case_when(
     auts %in% c("Jose Lozano", "Lozano Jose E") ~ "Jose Lozano Alonso",
