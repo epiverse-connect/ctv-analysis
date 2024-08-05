@@ -280,7 +280,7 @@ dep_plot +
 desc_checks <- ctv_pkg_descriptions %>%
   transmute(
     package            = Package,
-    has_github_url     = startsWith(URL, "https://github.com/") | startsWith(BugReports, "https://github.com/"),
+    uses_forge         = grepl("\\bhttps?://([^./]\\.)?(github|gitlab|gitea|codeberg)\\.", URL) | grepl("\\bhttps?://([^./]\\.)?(github|gitlab|gitea|codeberg)\\.", BugReports),
     uses_roxygen       = !is.na(RoxygenNote),
     has_knitr_vignette = grepl("knitr", VignetteBuilder),
     uses_testing       = purrr::map_lgl(dependencies, ~ any(.x$package %in% c("testthat", "testit", "unitizer", "RUnit", "tinytest"))),
@@ -325,7 +325,7 @@ n_pkgs <- nrow(all_checks)
 ```{r}
 check_descriptions <- tribble(
   ~check, ~description, ~details, ~category,
-  "has_github_url", "Has a GitHub URL", "In `BugReports` or URL` fields in `DESCRIPTION`", "Metadata",
+  "uses_forge", "Uses a software forge", "Links to a software forge (Codeberg, Gitea, GitHub, GitLab) in `URL` or `BugReports`", "Metadata",
   "uses_roxygen", "Uses Roxygen", "As indicated by the presence of the `RoxygenNote` field in `DESCRIPTION`", "Documentation",
   "has_knitr_vignette", "Has a knitr vignette", "", "Documentation",
   "uses_testing", "Uses a testing framework", "As indicated by the presence of testthat, testit, unitizer, RUnit, tinytest in `Suggests`", "Testing & CI",
