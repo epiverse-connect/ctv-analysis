@@ -113,7 +113,7 @@ authors <- pkg_versions |>
   dplyr::mutate(
     package = Package,
     parsed_authors_r = purrr::map(authoritative::parse_authors_r(`Authors@R`), format, include = c("given", "family")),
-    parsed_authors = purrr::map(authoritative::parse_authors(Author), format, include = c("given", "family")),
+    parsed_authors = authoritative::parse_authors(Author),
     .keep = "unused"
   ) |> 
   dplyr::mutate(
