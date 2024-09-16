@@ -121,7 +121,6 @@ authors <- pkg_versions |>
     auts = map(auts, stringi::stri_trans_general, "ASCII"),
     auts = map(auts, stringr::str_replace_all, "[[:punct:]]", " "),
     auts = map(auts, stringr::str_replace_all, "[[:space:]]+", " "),
-    auts = map(auts, stringr::str_replace_all, " \\w ", " "), # remove middle names
     auts = map(auts, stringr::str_remove_all, "et al"),
     auts = map(auts, stringr::str_remove_all, "\\b(User|Developer)\\b"),
     auts = map(auts, trimws),
@@ -131,24 +130,13 @@ authors <- pkg_versions |>
     .keep = "unused"
   ) |> 
   tidyr::unnest_longer(auts) |> 
+  dplyr::mutate(auts = authoritative::expand_names(auts, auts)) |> 
   dplyr::mutate(auts = case_when(
     auts %in% c("Jose Lozano", "Lozano Jose E") ~ "Jose Lozano Alonso",
-    auts == "K Seppa" ~ "Karri Seppa",
     auts == "Kevis Weiss" ~ "Kevin Weiss",
     auts == "Rich FitzJohn" ~ "Rich Fitzjohn",
-    auts == "Carles Breto" ~ "Carles Martinez Breto",
-    auts == "Isaac Fung" ~ "Isaac Chun Hai Fung",
-    auts == "V Wimmer" ~ "Valentin Wimmer",
-    auts == "T Correa" ~ "Thais Correa",
-    auts == "S Meyer" ~ "Sebastian Meyer",
-    auts == "M Salmon" ~ "Maelle Salmon",
-    auts == "M Rantanen" ~ "Matti Rantanen",
     auts == "Ahmad family = Rabiee" ~ "Ahmad Rabiee",
-    auts == "D Sabanes Bove" ~ "Daniel Sabanes Bove",
-    auts == "Eamon O Dea" ~ "Eamon Dea",
     auts == "Ed Ionides" ~ "Edward Ionides",
-    auts == "J Miettinen" ~ "Joonas Miettinen",
-    auts == "L Held" ~ "Leonhard Held",
     TRUE ~ auts
   ))
 ```
