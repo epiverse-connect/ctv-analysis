@@ -135,7 +135,7 @@ authors <- pkg_versions |>
     auts = stringr::str_to_title(auts)
   ) |> 
   dplyr::mutate(auts = case_when(
-    auts %in% c("Jose Lozano", "Lozano Jose E") ~ "Jose Lozano Alonso",
+    auts == "Lozano Jose E" ~ "Jose Lozano Alonso",
     auts == "Kevis Weiss" ~ "Kevin Weiss",
     auts == "Ahmad family = Rabiee" ~ "Ahmad Rabiee",
     auts == "Ed Ionides" ~ "Edward Ionides",

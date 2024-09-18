@@ -116,16 +116,17 @@
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
-      "RemoteUsername": "Bisaloo",
       "RemoteRepo": "authoritative",
-      "RemoteRef": "main",
-      "RemoteSha": "42b63f85f7d0519d25ef0ba6ef27b94d24cb3dc7",
+      "RemoteUsername": "Bisaloo",
+      "RemotePkgRef": "Bisaloo/authoritative",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "1a50f12dc60cfc255b563b87a08c009c767ccd7a",
       "Requirements": [
         "R",
         "stringi",
         "utils"
       ],
-      "Hash": "bc750435968e06fe8f45f1fe71c52270"
+      "Hash": "fdcd1cf43137b67ac13e14145ba67b6f"
     },
     "backports": {
       "Package": "backports",
