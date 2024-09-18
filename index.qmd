@@ -121,7 +121,6 @@ authors <- pkg_versions |>
     auts = map(auts, stringi::stri_trans_general, "ASCII"),
     auts = map(auts, stringr::str_replace_all, "[[:punct:]]", " "),
     auts = map(auts, stringr::str_replace_all, "[[:space:]]+", " "),
-    auts = map(auts, stringr::str_remove_all, "et al"),
     auts = map(auts, stringr::str_remove_all, "\\b(User|Developer)\\b"),
     auts = map(auts, trimws),
     maintainer = stringi::stri_trans_general(maintainer, "ASCII"),
