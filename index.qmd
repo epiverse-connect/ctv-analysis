@@ -131,10 +131,13 @@ authors <- pkg_versions |>
   ) |> 
   tidyr::unnest_longer(auts) |> 
   dplyr::mutate(auts = authoritative::expand_names(auts, auts)) |> 
+  # Standardize capitalization
+  dplyr::mutate(
+    auts = stringr::str_to_title(auts)
+  ) |> 
   dplyr::mutate(auts = case_when(
     auts %in% c("Jose Lozano", "Lozano Jose E") ~ "Jose Lozano Alonso",
     auts == "Kevis Weiss" ~ "Kevin Weiss",
-    auts == "Rich FitzJohn" ~ "Rich Fitzjohn",
     auts == "Ahmad family = Rabiee" ~ "Ahmad Rabiee",
     auts == "Ed Ionides" ~ "Edward Ionides",
     TRUE ~ auts
