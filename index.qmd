@@ -494,3 +494,8 @@ Hugo Gruson was funded for this work by the Wellcome Trust 224140/Z/21/Z.
 
 :::
 
+# Extra materials
+
+```{=html}
+<iframe width="780" height="1105" src="extra/useR2024_poster.pdf"></iframe>
+```
