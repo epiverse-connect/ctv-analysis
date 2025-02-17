@@ -267,7 +267,7 @@ desc_checks <- ctv_pkg_descriptions %>%
     package            = Package,
     uses_forge         = grepl("\\bhttps?://([^./]\\.)?(github|gitlab|gitea|codeberg)\\.", URL) | grepl("\\bhttps?://([^./]\\.)?(github|gitlab|gitea|codeberg)\\.", BugReports),
     uses_roxygen       = !is.na(RoxygenNote),
-    has_knitr_vignette = grepl("knitr", VignetteBuilder),
+    has_knitr_vignette = grepl("knitr", VignetteBuilder) | grepl("quarto", VignetteBuilder),
     uses_testing       = purrr::map_lgl(dependencies, ~ any(.x$package %in% c("testthat", "testit", "unitizer", "RUnit", "tinytest"))),
     has_no_deprecated  = !purrr::map_lgl(dependencies, ~ any(.x$package %in% c("RUnit", "XML", "RCurl", "plyr", "reshape2"))),
     uses_authors_r     = !is.na(`Authors@R`),
@@ -287,7 +287,7 @@ gh_contents <- gh_repos %>%
 gh_checks <- gh_contents %>%
   transmute(
     package          = package,
-    has_rmd_readme   = purrr::map_lgl(contents, ~ "README.Rmd" %in% .x),
+    has_rmd_readme   = purrr::map_lgl(contents, ~ any(c("README.Rmd", "README.qmd") %in% .x)),
     has_md_license   = purrr::map_lgl(contents, ~ "LICENSE.md" %in% .x),
     uses_pkgdown     = purrr::map_lgl(contents, ~ any(c("_pkgdown.yml", "_pkgdown.yaml", "pkgdown/pkgdown.yml") %in% .x)),
     uses_gha         = purrr::map_lgl(contents, ~ ".github/workflows" %in% .x),
@@ -312,7 +312,7 @@ check_descriptions <- tribble(
   ~check, ~description, ~details, ~category,
   "uses_forge", "Uses a software forge", "Links to a software forge (Codeberg, Gitea, GitHub, GitLab) in `URL` or `BugReports`", "Metadata",
   "uses_roxygen", "Uses Roxygen", "As indicated by the presence of the `RoxygenNote` field in `DESCRIPTION`", "Documentation",
-  "has_knitr_vignette", "Has a knitr vignette", "", "Documentation",
+  "has_knitr_vignette", "Has a knitr or quarto vignette", "", "Documentation",
   "uses_testing", "Uses a testing framework", "As indicated by the presence of testthat, testit, unitizer, RUnit, tinytest in `Suggests`", "Testing & CI",
   "has_no_deprecated", "Does not depend on deprecated packages", "XML, RCurl, RUnit, plyr, or reshape2 packages", "Sustainability",
   "uses_authors_r", "Has Authors@R field", "", "Metadata",
