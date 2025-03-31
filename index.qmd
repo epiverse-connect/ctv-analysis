@@ -2,12 +2,12 @@
 title: "`r yaml::read_yaml('settings.yml')$view` Task View analysis"
 logo: images/logo_white.svg
 date: last-modified
-format: 
+format:
   dashboard:
     include-in-header: google-analytics.html
     orientation: columns
     nav-buttons: github
-theme: 
+theme:
   - cosmo
   - custom.scss
 ---
@@ -65,7 +65,7 @@ pkgs <- ctv::read.ctv(tf) |>
 ```
 
 ```{r, eval=!is.null(yaml::read_yaml('settings.yml')$packages)}
-pkgs <- yaml::read_yaml('settings.yml')$packages |> 
+pkgs <- yaml::read_yaml('settings.yml')$packages |>
   c(pkgs)
 ```
 
@@ -77,9 +77,9 @@ if (length(pkgs) == 0) {
 ```
 
 ```{r, cache = TRUE}
-pkg_versions <- pkgs |> 
-  purrr::map(pkgsearch::cran_package_history) |> 
-  dplyr::bind_rows() |> 
+pkg_versions <- pkgs |>
+  purrr::map(pkgsearch::cran_package_history) |>
+  dplyr::bind_rows() |>
   dplyr::mutate(
     date = lubridate::ymd_hms(date),
     maintainer = trimws(stringr::str_extract(Maintainer, "^[^<]+"))
@@ -87,9 +87,9 @@ pkg_versions <- pkgs |>
 ```
 
 ```{r}
-ctv_pkg_descriptions <- pkg_versions |> 
-  group_by(Package) |> 
-  filter(date == max(date)) |> 
+ctv_pkg_descriptions <- pkg_versions |>
+  group_by(Package) |>
+  filter(date == max(date)) |>
   ungroup()
 ```
 
@@ -98,7 +98,7 @@ gh_repos <- read.csv("https://raw.githubusercontent.com/cran-task-views/Epidemio
 ```
 
 ```{r eval=!identical(yaml::read_yaml('settings.yml')$view, "Epidemiology")}
-gh_repos <- ctv_pkg_descriptions |> 
+gh_repos <- ctv_pkg_descriptions |>
   transmute(
     package = Package,
     github_repo = dplyr::coalesce(
@@ -109,13 +109,13 @@ gh_repos <- ctv_pkg_descriptions |>
 ```
 
 ```{r}
-authors <- pkg_versions |> 
+authors <- pkg_versions |>
   dplyr::mutate(
     package = Package,
     parsed_authors_r = purrr::map(authoritative::parse_authors_r(`Authors@R`), format, include = c("given", "family")),
     parsed_authors = authoritative::parse_authors(Author),
     .keep = "unused"
-  ) |> 
+  ) |>
   dplyr::mutate(
     auts = coalesce(parsed_authors, parsed_authors_r),
     auts = map(auts, stringi::stri_trans_general, "ASCII"),
@@ -127,13 +127,13 @@ authors <- pkg_versions |>
     maintainer = stringr::str_remove_all(maintainer, "[[:punct:]]"),
     maintainer = trimws(maintainer),
     .keep = "unused"
-  ) |> 
-  tidyr::unnest_longer(auts) |> 
-  dplyr::mutate(auts = authoritative::expand_names(auts, auts)) |> 
+  ) |>
+  tidyr::unnest_longer(auts) |>
+  dplyr::mutate(auts = authoritative::expand_names(auts, auts)) |>
   # Standardize capitalization
   dplyr::mutate(
     auts = stringr::str_to_title(auts)
-  ) |> 
+  ) |>
   dplyr::mutate(auts = case_when(
     auts == "Lozano Jose E" ~ "Jose Lozano Alonso",
     auts == "Kevis Weiss" ~ "Kevin Weiss",
@@ -172,8 +172,8 @@ list(
 ### Row {height=20%}
 
 ```{r github_stars, cache = TRUE}
-stars <- gh_repos |> 
-  na.omit() |> 
+stars <- gh_repos |>
+  na.omit() |>
   dplyr::mutate(
     stars = purrr::map_int(github_repo, ~ length(gh::gh("/repos/{repo}/stargazers", repo = .x)))
   )
@@ -192,10 +192,10 @@ list(
 pkgs_string <- glue::glue_collapse(pkgs, sep = ",")
 yesterday <- Sys.Date() - 1
 
-ctv_cran_stats <- "https://cranlogs.r-pkg.org/downloads/daily/2012-05-13:{yesterday}/{pkgs_string}" |> 
-  glue::glue() |> 
-  jsonlite::fromJSON() |> 
-  dplyr::select(-start, -end) |> 
+ctv_cran_stats <- "https://cranlogs.r-pkg.org/downloads/daily/2012-05-13:{yesterday}/{pkgs_string}" |>
+  glue::glue() |>
+  jsonlite::fromJSON() |>
+  dplyr::select(-start, -end) |>
   tidyr::unnest(downloads)
 ```
 
@@ -211,15 +211,15 @@ list(
 ### Row {.flow} {.tabset}
 
 ```{r}
-dep_count <- pkg_versions |> 
+dep_count <- pkg_versions |>
   mutate(
     nonbase_dependencies = purrr::map(
-      dependencies, 
+      dependencies,
       ~ .x[!.x$package %in% tools:::.get_standard_package_names()$base, ]
     ),
     Soft = map_int(nonbase_dependencies, ~ sum(.x$type == "Suggests")),
     Hard = map_int(nonbase_dependencies, ~ n_distinct(.x$package[.x$type %in% c("Depends", "Imports", "LinkingTo")]))
-  ) |> 
+  ) |>
   tidyr::pivot_longer(
     cols = c(Soft, Hard),
     names_to = "Dependency type",
@@ -303,7 +303,7 @@ all_checks <- merge(
   desc_checks,
   all = TRUE,
   by = "package"
-) 
+)
 n_pkgs <- nrow(all_checks)
 ```
 
@@ -334,36 +334,36 @@ all_checks |>
   as.data.frame() |>
   tibble::rownames_to_column("check") |>
   left_join(check_descriptions) |>
-  select(-check) |> 
+  select(-check) |>
   mutate(
     passed = rowSums(pick(!c(description, details, category)), na.rm = TRUE) / n_pkgs * 100,
     .keep = "unused"
   ) |>
-  arrange(desc(passed)) |> 
-  gt::gt(groupname_col = "category", rowname_col = "description") |> 
+  arrange(desc(passed)) |>
+  gt::gt(groupname_col = "category", rowname_col = "description") |>
   gt::cols_merge(
     columns = c(description, details),
     pattern = "{1}<br><small><i>{2}</i></small>"
-  ) |> 
-  gt::cols_width(passed ~ gt::px(100)) |> 
+  ) |>
+  gt::cols_width(passed ~ gt::px(100)) |>
   gt::fmt_number(
     columns = passed,
     decimals = 0,
     pattern = "{x}%"
-  ) |> 
+  ) |>
   gt::data_color(
     method = "numeric",
     palette = "viridis",
     domain = c(0, 100)
-  ) |> 
+  ) |>
   gt::tab_stub_indent(
     rows = gt::everything(),
     indent = 5
-  ) |> 
+  ) |>
   gt::tab_header(
     title = gt::md("Adherence to good practices"),
     subtitle = gt::md("Good practices as defined by [rOpenSci dev guide](https://devguide.ropensci.org/index.html), and [Epiverse-TRACE blueprints](https://epiverse-trace.github.io/blueprints/).")
-  ) |> 
+  ) |>
   gt::tab_options(
     column_labels.hidden = TRUE,
     row_group.font.weight = "bold",
@@ -371,19 +371,19 @@ all_checks |>
   )
 ```
 
-## Authorship trends and sustainability {width=33%} 
+## Authorship trends and sustainability {width=33%}
 
 ### Row {.flow}
 
 ```{r}
-maintainers_by_year <- pkg_versions |> 
-  group_by(name = maintainer) |> 
+maintainers_by_year <- pkg_versions |>
+  group_by(name = maintainer) |>
   summarise(
     maintainer_since = lubridate::year(min(date))
   )
 
 authors_by_year <- authors |>
-  group_by(name = auts) |> 
+  group_by(name = auts) |>
   summarise(
     author_since = lubridate::year(min(date))
   )
@@ -393,10 +393,10 @@ full_join(maintainers_by_year, authors_by_year, by = "name") |>
     cols = c(maintainer_since, author_since),
     names_to = "role",
     values_to = "year"
-  ) |> 
+  ) |>
   dplyr::mutate(
     role = tools::toTitleCase(gsub("_since$", "", role))
-  ) |> 
+  ) |>
   ggplot(aes(x = year, fill = role)) +
     geom_histogram(binwidth = 1) +
     labs(
@@ -414,32 +414,32 @@ full_join(maintainers_by_year, authors_by_year, by = "name") |>
 ```{r}
 source("_scripts/parse_archive.R")
 
-yearly_archivals <- archive_df |> 
-  filter(package %in% pkgs) |> 
+yearly_archivals <- archive_df |>
+  filter(package %in% pkgs) |>
   dplyr::mutate(
     date = lubridate::ymd(archivals),
     year = lubridate::year(date),
     .keep = "unused"
-  ) |> 
-  count(year, name = "archivals") |> 
+  ) |>
+  count(year, name = "archivals") |>
   dplyr::mutate(archivals = -archivals)
 ```
 
 ```{r}
-pkg_versions |> 
+pkg_versions |>
   dplyr::mutate(
-    first_release = Version == min(Version), 
+    first_release = Version == min(Version),
     maintainer_change = maintainer != dplyr::lag(maintainer),
     .by = Package
   ) |>
-  dplyr::group_by(year = lubridate::year(date)) |> 
+  dplyr::group_by(year = lubridate::year(date)) |>
   summarise(
     updates = sum(!first_release),
     `first releases` = sum(first_release),
     `maintainer transitions` = sum(maintainer_change),
     .groups = "drop"
-  ) |> 
-  dplyr::full_join(yearly_archivals, by = "year") |> 
+  ) |>
+  dplyr::full_join(yearly_archivals, by = "year") |>
   tidyr::pivot_longer(
     cols = c(updates, `first releases`, `maintainer transitions`, archivals),
     names_to = "release_type",
@@ -459,6 +459,8 @@ pkg_versions |>
 # About
 
 ::: {.card title="References"}
+
+Last update with data from `r Sys.Date()`.
 
 ```{r, results='asis'}
 summary(report::report(sessionInfo()))
@@ -490,7 +492,7 @@ Additional contributions and reviews were provided by Chris Hartgerink.
 
 #### Funding
 
-Hugo Gruson was funded for this work by the Wellcome Trust 224140/Z/21/Z. 
+Hugo Gruson was funded for this work by the Wellcome Trust 224140/Z/21/Z.
 
 :::
 
